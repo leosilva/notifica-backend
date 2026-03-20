@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'apps.accounts',
     'apps.noticias',
+    'apps.postagens',
+    'apps.carrossel',
 ]
 
 MIDDLEWARE = [

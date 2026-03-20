@@ -1,0 +1,1 @@
+from apps.carrossel.views.carrossel_view import CarrosselView

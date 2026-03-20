@@ -7,6 +7,9 @@ from apps.postagens.models import Postagem
 
 
 class PostagemViewSet(ViewSet):
+    queryset = Postagem.objects.all()
+
+
     def retrieve(self, request, postagem_id):
         postagem = get_object_or_404(
             Postagem, 
@@ -18,7 +21,7 @@ class PostagemViewSet(ViewSet):
     
 
     def list(self, request):
-        postagens = Postagem.objects.filter(
+        postagens = self.queryset.filter(
             usuario_id=request.user.id
         )
 
