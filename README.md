@@ -1,8 +1,14 @@
-# Notifica IFRN
+# notIFica
 
 Uma API que registra postagens e comunicados de alunos e servidores para display em carrossel de conteúdo via TVs disponibilizadas pelo campus.
 
 Pensado para melhorar a ala de comunicação da escola em meio a proibição de celulares.
+
+## Tabela de Conteúdos
+
+1. [Tecnologias](#tecnologias)
+2. [Como instalar](#como-instalar)
+4. [Créditos](#créditos)
 
 ## Tecnologias
 
@@ -38,10 +44,10 @@ poetry install
 Para as variáveis de ambiente, o projeto conta com um exemplo para um arquivo `.env`, que requer informações como as credenciais do banco de dados, do serviço de armazenamento Cloudinary, a chave da API do Gemini e a chave secreta da aplicação.
 
 ```
-# para funcionamento interno do Django e DRF
+# Para funcionamento interno do Django e DRF
 SECRET_KEY=
 
-# serviço de armazenamento
+# Serviço de armazenamento
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
@@ -55,11 +61,16 @@ DB_HOST=
 DB_USER=
 DB_PASSWORD=
 DB_PORT=
+
+# Credenciais para o funcionamento dos crawlers
+SUPER_USER_USERNAME=
+SUPER_USER_PASSWORD=
 ```
 
 Ao configurar cada uma dessas variáveis, o backend está pronto para rodar.
 
-# Créditos
-Leo Silva, coordenador do projeto.
-Matheus Lemos, desenvolvedor front-end.
-Yuri Teixeira, desenvolvedor back-end.
+## Créditos
+
+- Leo Silva, coordenador do projeto.
+- Matheus Lemos, desenvolvedor front-end.
+- Yuri Teixeira, desenvolvedor back-end.

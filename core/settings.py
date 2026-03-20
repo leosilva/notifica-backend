@@ -31,11 +31,26 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
     'apps.accounts',
     'apps.noticias',
     'apps.postagens',
     'apps.carrossel',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'notIFica API',
+    'DESCRIPTION': 'Uma API stateless para fluxo de postagens e notícias moderadas por inteligência artificial no ambiente acadêmico do IFRN.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

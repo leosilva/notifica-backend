@@ -16,7 +16,7 @@ class Crawler(ABC):
 
     def _get_token(self) -> str:
         response = requests.post(f"{self.api_url}/login/", json = {
-            "username": os.getenv("SUPER_USER_NAME"),
+            "username": os.getenv("SUPER_USER_USERNAME"),
             "password": os.getenv("SUPER_USER_PASSWORD"),
         })
 
