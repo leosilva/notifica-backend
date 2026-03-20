@@ -1,0 +1,1 @@
+from core.views.healthcheck import healthcheck

@@ -1,1 +1,1 @@
-from accounts.views.register import RegisterView
+from accounts.views.register_view import RegisterView
