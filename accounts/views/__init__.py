@@ -1,0 +1,1 @@
+from accounts.views.register import RegisterView

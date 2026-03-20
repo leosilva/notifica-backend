@@ -1,0 +1,1 @@
+from accounts.serializers.credentials_serializer import CredentialsSerializer
