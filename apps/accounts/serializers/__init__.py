@@ -1,0 +1,2 @@
+from apps.accounts.serializers.credentials_serializer import CredentialsSerializer
+from apps.accounts.serializers.usuario_serializer import UsuarioSerializer

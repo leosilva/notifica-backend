@@ -1,0 +1,1 @@
+from apps.postagens.views.postagem_viewset import PostagemViewSet

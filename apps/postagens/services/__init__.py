@@ -1,0 +1,1 @@
+from apps.postagens.services.validacao import validar_postagem

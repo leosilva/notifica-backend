@@ -1,0 +1,1 @@
+from apps.postagens.serializers.postagem_serializer import PostagemSerializer

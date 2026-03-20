@@ -1,0 +1,1 @@
+from apps.postagens.models.postagem import Postagem

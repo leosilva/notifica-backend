@@ -1,8 +1,8 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 import requests
-from accounts.serializers import CredentialsSerializer
-from accounts.models import User
+from apps.accounts.serializers import CredentialsSerializer
+from apps.accounts.models import Usuario
 
 SUAP_URL = 'https://suap.ifrn.edu.br/api'
 
@@ -30,10 +30,10 @@ class RegisterView(GenericAPIView):
             })
         
         try:
-            user = User.objects.create(
+            user = Usuario.objects.create(
                 username=serializer.validated_data.get('username'),
-                first_name=user_data.get('first_name'),
-                last_name=user_data.get('last_name'),
+                first_name=user_data.get('nome'),
+                last_name=user_data.get('sobrenome'),
                 email=user_data.get('email')
             )
             user.set_password(serializer.validated_data.get('password'))
@@ -45,6 +45,7 @@ class RegisterView(GenericAPIView):
         
         return Response(status=201)
         
+
     def _get_suap_token(self, serializer) -> str:
         response = requests.post(f'{SUAP_URL}/token/pair', json={
             'username': serializer.validated_data.get('username'),
@@ -73,6 +74,6 @@ class RegisterView(GenericAPIView):
         return {
             'email': body.get('email_google_classroom'),
             'campus': body.get('campus'),
-            'first_name': nome[0],
-            'last_name': nome[1],
+            'nome': nome[0],
+            'sobrenome': nome[1],
         }
