@@ -14,11 +14,11 @@ class NoticiaViewSet(ViewSet):
     queryset = Noticia.objects.all()
 
 
-    def retrieve(self, request, noticia_id):
+    def retrieve(self, request, pk):
         """Retorna uma notícia por id."""
         noticia = get_object_or_404(
             Noticia, 
-            pk=noticia_id, 
+            pk=pk, 
             usuario_id=request.user.id
         )
 
@@ -44,9 +44,9 @@ class NoticiaViewSet(ViewSet):
         serializer = NoticiaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        noticia = serializer.save(usuario=request.user)
+        serializer.save(usuario=request.user)
 
-        return Response(noticia.data, status=201)   # type: ignore
+        return Response(serializer.data, status=201)   # type: ignore
 
 
     def destroy(self, request, noticia_id):

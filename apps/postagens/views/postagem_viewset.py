@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 from apps.postagens.services import validar_postagem
 from apps.postagens.serializers import PostagemSerializer
 from apps.postagens.models import Postagem
@@ -9,11 +11,14 @@ from apps.postagens.models import Postagem
 class PostagemViewSet(ViewSet):
     queryset = Postagem.objects.all()
 
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request, postagem_id):
+
+    def retrieve(self, request, pk):
         postagem = get_object_or_404(
             Postagem, 
-            pk=postagem_id, 
+            pk=pk,
             usuario_id=request.user.id
         )
 
@@ -25,10 +30,10 @@ class PostagemViewSet(ViewSet):
             usuario_id=request.user.id
         )
 
-        return Response(PostagemSerializer(postagens).data, status=200)
+        return Response(PostagemSerializer(postagens, many=True).data, status=200)
 
 
-    def post(self, request):
+    def create(self, request):
         serializer = PostagemSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -42,7 +47,7 @@ class PostagemViewSet(ViewSet):
                     'error': 'Sua postagem foi filtrada e não é adequada.'
                 }, status=400)
         
-        serializer.save(user=request.user)
+        serializer.save(usuario=request.user)
 
         return Response(serializer.data, status=201)
 

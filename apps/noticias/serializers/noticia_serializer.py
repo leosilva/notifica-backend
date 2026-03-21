@@ -2,8 +2,8 @@ from django.core.files.images import ImageFile
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from apps.accounts.serializers import UsuarioSerializer
-from apps.noticias.models import Noticia
 from apps.noticias.services import upload_image
+from apps.noticias.models import Noticia
 
 
 class ImageFileOuString(serializers.Field):
@@ -15,10 +15,19 @@ class ImageFileOuString(serializers.Field):
         raise ValidationError('Deve ser um ImageFile ou String.')
 
 
-class NoticiaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Noticia
-        fields = ['titulo', 'sumario', 'link', 'imagem', 'data', 'usuario']
+    def to_representation(self, value) -> str:
+        return str(value)
 
-    imagem = ImageFileOuString()
-    usuario = UsuarioSerializer(read_only=True, required=False)
+
+class NoticiaSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
+    titulo = serializers.CharField()
+    sumario = serializers.CharField()
+    link = serializers.URLField()
+    imagem = ImageFileOuString(required=False)
+    publicado_em = serializers.DateField(required=False)
+    usuario = UsuarioSerializer(required=False)
+
+
+    def create(self, validated_data):
+        return Noticia.objects.create(**validated_data)

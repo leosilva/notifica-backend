@@ -13,7 +13,7 @@ class Usuario(AbstractBaseUser):
         ADMINISTRADOR = ('admin', 'Admin')
 
 
-    matricula = models.CharField(max_length=14, unique=True)
+    username = models.CharField(max_length=14, unique=True)
     email = models.EmailField(unique=True)
 
     nome = models.CharField(max_length=255)
@@ -22,7 +22,7 @@ class Usuario(AbstractBaseUser):
     cargo = models.CharField(max_length=8, choices=Cargo.choices)
 
     objects = UserManager()
-    USERNAME_FIELD = 'matricula'
+    USERNAME_FIELD = 'username'
 
     @property
     def is_authorized(self):

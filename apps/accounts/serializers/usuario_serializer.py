@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 class UsuarioSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    matricula = serializers.CharField()
+    username = serializers.CharField()
     nome = serializers.SerializerMethodField()
     email = serializers.EmailField()
 

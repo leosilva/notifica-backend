@@ -9,7 +9,7 @@ class Noticia(models.Model):
     link = models.URLField(unique=True)
     imagem = models.URLField()
 
-    data = models.DateField()
+    publicado_em = models.DateField(auto_now_add=True)
     disponivel = models.BooleanField(default=True)
 
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)

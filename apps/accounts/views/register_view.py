@@ -1,5 +1,6 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 import requests
 from apps.accounts.serializers import CredentialsSerializer
 from apps.accounts.models import Usuario
@@ -9,18 +10,22 @@ SUAP_URL = 'https://suap.ifrn.edu.br/api'
 
 class RegisterView(GenericAPIView):
     serializer_class = CredentialsSerializer
+    permission_classes = [AllowAny]
 
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        print('lalala')
         try:
             token = self._get_suap_token(serializer)
         except Exception as e:
             return Response({
                 'error': str(e)
             }, status=400)
+        
+        print('lalala')
 
         user_data = self._get_user_data(token)
 
@@ -32,13 +37,15 @@ class RegisterView(GenericAPIView):
         try:
             user = Usuario.objects.create(
                 username=serializer.validated_data.get('username'),
-                first_name=user_data.get('nome'),
-                last_name=user_data.get('sobrenome'),
-                email=user_data.get('email')
+                nome=user_data.get('nome'),
+                sobrenome=user_data.get('sobrenome'),
+                email=user_data.get('email'),
+                cargo=user_data.get('cargo'),
             )
             user.set_password(serializer.validated_data.get('password'))
             user.save()
-        except:
+        except Exception as e:
+            print(e)
             return Response({
                 'error': 'Usuário já existente.'
             }, status=409)
@@ -76,4 +83,5 @@ class RegisterView(GenericAPIView):
             'campus': body.get('campus'),
             'nome': nome[0],
             'sobrenome': nome[1],
+            'cargo': body.get('tipo_usuario').lower(),
         }
