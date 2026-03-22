@@ -1,11 +1,13 @@
 import feedparser, requests
 from feedparser.api import FeedParserDict
 from bs4 import BeautifulSoup
-from scripts.base import Crawler
+from newspaper import Article
+from scripts.bots.base import Crawler
 
 
 class CNNCrawler(Crawler):
-    def __init__(self) -> None:
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.rss_url = 'https://admin.cnnbrasil.com.br/feed/'
 
 
@@ -18,6 +20,12 @@ class CNNCrawler(Crawler):
         token = self._get_token()
 
         for entry in feed.entries:
+            url: str = entry.link   # type: ignore
+            if self._is_repetida(url):   # type: ignore
+                continue
+
+            self._indexa_noticia(url)
+
             noticia = self._montar_noticia(entry)
 
             result = requests.post(

@@ -1,10 +1,11 @@
 import feedparser, requests
 from feedparser.api import FeedParserDict
-from scripts.base import Crawler
+from scripts.bots.base import Crawler
 
 
 class G1Crawler(Crawler):
-    def __init__(self) -> None:
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.rss_url = 'https://g1.globo.com/rss/g1/'
 
 
@@ -17,6 +18,12 @@ class G1Crawler(Crawler):
         token = self._get_token()
 
         for entry in feed.entries:
+            url: str = entry.link   # type: ignore
+            if self._is_repetida(url):   # type: ignore
+                continue
+
+            self._indexa_noticia(url)
+
             noticia = self._montar_noticia(entry)
 
             result = requests.post(

@@ -1,18 +1,13 @@
 import requests, feedparser
 from feedparser.api import FeedParserDict
 from bs4 import BeautifulSoup
-import logging
-from scripts.base import Crawler
+from scripts.bots.base import Crawler
 
 
 class UOLCrawler(Crawler):
-    def __init__(self) -> None:
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.rss_url = 'https://rss.home.uol.com.br/index.xml'
-        self.logger = logging.getLogger(__name__)
-        logging.basicConfig(
-            filename=".log", filemode="w",
-            format="%(asctime)s - %(message)s"
-        )
 
 
     def crawl(self) -> None:
@@ -25,6 +20,12 @@ class UOLCrawler(Crawler):
         for entry in feed.entries:
             if entry is None:
                 continue
+            
+            url: str = entry.link   # type: ignore
+            if self._is_repetida(url):   # type: ignore
+                continue
+
+            self._indexa_noticia(url)
 
             noticia = self._montar_noticia(entry)
 
@@ -59,5 +60,3 @@ class UOLCrawler(Crawler):
         soup = BeautifulSoup(html, 'html.parser')
 
         return soup.select_one('h1.title').text     # type: ignore
-
-
