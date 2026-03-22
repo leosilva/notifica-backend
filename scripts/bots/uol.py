@@ -23,6 +23,7 @@ class UOLCrawler(Crawler):
             
             url: str = entry.link   # type: ignore
             if self._is_repetida(url):   # type: ignore
+                self.logger.error(f'NOTÍCIA JÁ INDEXADA: {url}.')
                 continue
 
             self._indexa_noticia(url)
