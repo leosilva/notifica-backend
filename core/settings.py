@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from pathlib import Path
+from datetime import timedelta
 import os
 
 
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
+    'corsheaders',
     'apps.accounts',
     'apps.noticias',
     'apps.postagens',
@@ -55,6 +57,7 @@ SPECTACULAR_SETTINGS = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -149,4 +152,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.noticias.tasks.buscar_noticias',
         'schedule': 3600.0,  # segundos
     },
+}
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=20),
 }
