@@ -32,5 +32,7 @@ dependencies = [
     "drf-spectacular-sidecar (>=2026.3.1,<2027.0.0)", 
     "chromadb (>=1.5.5,<2.0.0)", 
     "sentence-transformers (>=5.3.0,<6.0.0)", 
-    "newspaper3k (>=0.2.8,<0.3.0)"
+    "newspaper3k (>=0.2.8,<0.3.0)", 
+    "gunicorn (>=25.3.0,<26.0.0)", 
+    "django-cors-headers (>=4.9.0,<5.0.0)"
 ]
