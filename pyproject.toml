@@ -6,7 +6,7 @@ authors = [
     {name = "Yuri Teixeira",email = "yuriteixeirac@proton.me"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "django (>=6.0.5,<7.0.0)",
     "feedparser (>=6.0.12,<7.0.0)",
@@ -15,7 +15,12 @@ dependencies = [
     "celery (>=5.6.3,<6.0.0)",
     "beautifulsoup4 (>=4.14.3,<5.0.0)",
     "python-dotenv (>=1.2.2,<2.0.0)",
-    "mysqlclient (>=2.2.8,<3.0.0)"
+    "mysqlclient (>=2.2.8,<3.0.0)",
+    "djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
+    "drf-spectacular (>=0.29.0,<0.30.0)",
+    "django-cors-headers (>=4.9.0,<5.0.0)",
+    "cloudinary (>=1.44.2,<2.0.0)",
+    "google-genai (>=2.7.0,<3.0.0)"
 ]
 
 
