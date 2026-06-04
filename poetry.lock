@@ -168,6 +168,7 @@ files = [
 
 [package.dependencies]
 frozenlist = ">=1.1.0"
+typing-extensions = {version = ">=4.2", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "amqp"
@@ -222,6 +223,7 @@ files = [
 
 [package.dependencies]
 idna = ">=2.8"
+typing_extensions = {version = ">=4.5", markers = "python_version < \"3.13\""}
 
 [package.extras]
 trio = ["trio (>=0.32.0)"]
@@ -2282,6 +2284,7 @@ files = [
 [package.dependencies]
 googleapis-common-protos = ">=1.57,<2.0"
 grpcio = [
+    {version = ">=1.63.2,<2.0.0", markers = "python_version < \"3.13\""},
     {version = ">=1.66.2,<2.0.0", markers = "python_version == \"3.13\""},
     {version = ">=1.75.1,<2.0.0", markers = "python_version >= \"3.14\""},
 ]
@@ -3245,6 +3248,7 @@ files = [
 [package.dependencies]
 attrs = ">=22.2.0"
 rpds-py = ">=0.7.0"
+typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "requests"
@@ -4130,3 +4134,5 @@ propcache = ">=0.2.1"
 lock-version = "2.1"
 python-versions = ">=3.13"
 content-hash = "d85e4670cfb1b319c65eb33c028f33ec1d57fb12639142f309d3ea4ddb087620"
+python-versions = ">=3.12"
+content-hash = "5d4a4fe221f98d4a5edf00f683aa1c3df1cb219c7296dae3f8f929ed06597606"
