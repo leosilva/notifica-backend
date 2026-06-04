@@ -26,17 +26,27 @@ class ConteudoSerializer(serializers.Serializer):
     corpo = serializers.CharField()
     link = serializers.URLField(required=False, allow_null=True, allow_blank=True)
     imagem = ImageFileOuString(required=False, allow_null=True)
-    publicado_em = serializers.DateTimeField(required=False)
+    publicado_em = serializers.SerializerMethodField()
     disponivel = serializers.BooleanField()
     usuario = UsuarioSerializer(required=False)
-    tipo = serializers.ChoiceField(choices=["postagem", "noticia"])
+    tipo = serializers.ChoiceField(choices=["postagem", "noticia"], write_only=True)
+
+    def get_publicado_em(self, instance):
+        publicado_em = getattr(instance, "publicado_em", None)
+
+        if publicado_em is None:
+            return None
+
+        return publicado_em.isoformat()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
         if isinstance(instance, Noticia):
             data["tipo"] = "noticia"
         elif isinstance(instance, Postagem):
             data["tipo"] = "postagem"
+
         return data
 
     def create(self, validated_data):

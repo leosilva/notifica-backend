@@ -1,6 +1,8 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import extend_schema
+from django.db import IntegrityError
 import requests
 from apps.accounts.serializers import CredentialsSerializer
 from apps.accounts.models import Usuario
@@ -13,26 +15,25 @@ class RegisterView(GenericAPIView):
     permission_classes = [AllowAny]
 
 
+    @extend_schema(
+        summary="Registro de usuários.",
+        description="Registra um usuário baseado em sua matrícula e senha do SUAP.",
+        request=CredentialsSerializer,
+        responses={403: None, 409: None, 400: None, 201: None}
+    )
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        print('lalala')
+        
         try:
             token = self._get_suap_token(serializer)
         except Exception as e:
-            return Response({
-                'error': str(e)
-            }, status=400)
-        
-        print('lalala')
+            return Response(status=400)
 
         user_data = self._get_user_data(token)
 
         if user_data.get('campus') != 'CM':
-            return Response({
-                'error': 'Campus não autorizado.'
-            })
+            return Response(status=403)
         
         try:
             user = Usuario.objects.create(
@@ -44,11 +45,8 @@ class RegisterView(GenericAPIView):
             )
             user.set_password(serializer.validated_data.get('password'))
             user.save()
-        except Exception as e:
-            print(e)
-            return Response({
-                'error': 'Usuário já existente.'
-            }, status=409)
+        except IntegrityError:
+            return Response(status=409)
         
         return Response(status=201)
         

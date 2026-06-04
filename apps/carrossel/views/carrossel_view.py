@@ -2,38 +2,40 @@ from datetime import datetime, timedelta
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
 
 from apps.noticias.models import Noticia
 from apps.postagens.models import Postagem
 from core.serializers import ConteudoSerializer
 
+from collections import deque
+
 
 class CarrosselView(APIView):
+
+    @extend_schema(
+        summary="Rota de carrossel.",
+        description="Retorna as notícias e postagens das últimas 12 horas em uma proporção de 5 notícias para 1 postagem.",
+        responses={200: ConteudoSerializer(many=True)}
+    )
     def get(self, request):
         noticias, postagens = self._get_content()
 
-        if not postagens:
-            return Response(noticias, status=200)
-        if not noticias:
-            return Response(postagens, status=200)
+        noticias = deque(noticias)
+        postagens = deque(postagens)
 
         conteudo = []
-        for i in range(max(len(postagens), len(noticias))):
-            if not noticias and not postagens:
-                break
 
-            try:
-                if i % 5 == 0:
-                    conteudo.append(postagens[-1])
-                    postagens.pop()
-                else:
-                    conteudo.append(noticias[-1])
-                    noticias.pop()
-            except IndexError:
-                pass
-
+        while noticias or postagens:
+            for _ in range(5):
+                if noticias:
+                    conteudo.append(noticias.popleft())
+                
+            if postagens:
+                conteudo.append(postagens.popleft())
+        
         return Response(conteudo, status=200)
-
+    
     def _get_content(self):
         noticias = Noticia.objects.filter(
             publicado_em__gte=datetime.now() - timedelta(hours=12),
@@ -46,4 +48,4 @@ class CarrosselView(APIView):
         ).order_by("publicado_em")
         postagens_serial = ConteudoSerializer(postagens, many=True)
 
-        return noticias_serial.data, postagens_serial.data
+        return list(noticias_serial.data), list(postagens_serial.data)

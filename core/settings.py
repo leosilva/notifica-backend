@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
+    'drf_spectacular_sidecar',
     'corsheaders',
     'apps.accounts',
     'apps.noticias',
@@ -52,6 +53,9 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Uma API stateless para fluxo de postagens e notícias moderadas por inteligência artificial no ambiente acadêmico do IFRN.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
 }
 
 MIDDLEWARE = [

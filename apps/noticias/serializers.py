@@ -22,7 +22,7 @@ class ImageFileOuString(serializers.Field):
 class NoticiaSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
     titulo = serializers.CharField()
-    sumario = serializers.CharField()
+    corpo = serializers.CharField()
     link = serializers.URLField()
     imagem = ImageFileOuString(required=False)
     publicado_em = serializers.DateField(required=False)
@@ -31,3 +31,12 @@ class NoticiaSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return Noticia.objects.create(**validated_data)
+
+
+class NoticiaInputSerializer(serializers.Serializer):
+    titulo = serializers.CharField()
+    corpo = serializers.CharField()
+    link = serializers.URLField()
+    imagem = ImageFileOuString(required=False)
+    disponivel = serializers.BooleanField()
+    

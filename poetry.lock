@@ -1023,6 +1023,21 @@ offline = ["drf-spectacular-sidecar"]
 sidecar = ["drf-spectacular-sidecar"]
 
 [[package]]
+name = "drf-spectacular-sidecar"
+version = "2026.6.1"
+description = "Serve self-contained distribution builds of Swagger UI and Redoc with Django"
+optional = false
+python-versions = ">=3.6"
+groups = ["main"]
+files = [
+    {file = "drf_spectacular_sidecar-2026.6.1-py3-none-any.whl", hash = "sha256:4560572773c7e5f636d36cd2903204e2c59560af0548da254e311f94458c51a2"},
+    {file = "drf_spectacular_sidecar-2026.6.1.tar.gz", hash = "sha256:e159874fa85ccee39b801e260f2a3585fbe36a0c79bf811824eef9010ab98ea9"},
+]
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
 name = "durationpy"
 version = "0.10"
 description = "Module for converting between datetime.timedelta and Go's Duration strings."
@@ -4117,5 +4132,7 @@ propcache = ">=0.2.1"
 
 [metadata]
 lock-version = "2.1"
+python-versions = ">=3.13"
+content-hash = "d85e4670cfb1b319c65eb33c028f33ec1d57fb12639142f309d3ea4ddb087620"
 python-versions = ">=3.12"
 content-hash = "5d4a4fe221f98d4a5edf00f683aa1c3df1cb219c7296dae3f8f929ed06597606"
