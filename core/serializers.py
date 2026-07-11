@@ -26,14 +26,8 @@ class ConteudoSerializer(serializers.Serializer):
     corpo = serializers.CharField()
     link = serializers.URLField(required=False, allow_null=True, allow_blank=True)
     imagem = ImageFileOuString(required=False, allow_null=True)
-    cor_fundo = serializers.RegexField(
-        regex=r'^#(?:[0-9a-fA-F]{3}){1,2}$',
-        required=False,
-        allow_null=True,
-        max_length=7,
-        error_messages={
-            'invalid': "Campo 'cor_fundo' deve ser uma cor hexadecimal válida."
-        },
+    gradiente_fundo = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True, max_length=512
     )
     publicado_em = serializers.SerializerMethodField()
     disponivel = serializers.BooleanField()
@@ -43,11 +37,11 @@ class ConteudoSerializer(serializers.Serializer):
     def validate(self, attrs):
         if (
             attrs.get("tipo") == "postagem"
-            and attrs.get("cor_fundo")
+            and attrs.get("gradiente_fundo")
             and attrs.get("imagem")
         ):
             raise serializers.ValidationError(
-                "Informe apenas 'cor_fundo' ou 'imagem', não ambos."
+                "Informe apenas 'gradiente_fundo' ou 'imagem', não ambos."
             )
 
         return attrs
@@ -75,7 +69,7 @@ class ConteudoSerializer(serializers.Serializer):
 
         if tipo == "noticia":
             validated_data["sumario"] = validated_data.pop("corpo")
-            validated_data.pop("cor_fundo", None)
+            validated_data.pop("gradiente_fundo", None)
             return Noticia.objects.create(**validated_data)
         elif tipo == "postagem":
             validated_data.pop("link", None)

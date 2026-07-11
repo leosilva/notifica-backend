@@ -28,25 +28,54 @@ class ImageFileOuUrl(serializers.Field):
         return str(value)
 
 
+def validar_gradiente(valor: str) -> str:
+    import re
+
+    if not valor:
+        raise serializers.ValidationError(
+            "Campo 'gradiente_fundo' não pode estar vazio."
+        )
+
+    if not re.match(r'^linear-gradient\(', valor):
+        raise serializers.ValidationError(
+            "Campo 'gradiente_fundo' deve começar com 'linear-gradient('."
+        )
+
+    if not valor.endswith(')'):
+        raise serializers.ValidationError(
+            "Campo 'gradiente_fundo' deve terminar com ')'."
+        )
+
+    if not valor.count('(') == valor.count(')'):
+        raise serializers.ValidationError(
+            "Campo 'gradiente_fundo' contém parênteses desbalanceados."
+        )
+
+    proibido = {';', '{', '}', '<', '>', 'url('}
+    if any(p in valor.lower() for p in proibido):
+        raise serializers.ValidationError(
+            "Campo 'gradiente_fundo' contém caracteres não permitidos."
+        )
+
+    return valor
+
+
 class PostagemInputSerializer(serializers.Serializer):
     titulo = serializers.CharField()
     corpo = serializers.CharField()
-    cor_fundo = serializers.RegexField(
-        regex=r'^#(?:[0-9a-fA-F]{3}){1,2}$',
+    gradiente_fundo = serializers.CharField(
         required=False,
         allow_null=True,
-        max_length=7,
-        error_messages={
-            'invalid': "Campo 'cor_fundo' deve ser uma cor hexadecimal válida."
-        },
+        max_length=512,
+        validators=[validar_gradiente],
     )
     imagem = ImageFileOuUrl(required=False, allow_null=True)
     disponivel = serializers.BooleanField(required=False)
 
     def validate(self, attrs):
-        if attrs.get('cor_fundo') and attrs.get('imagem'):
+        if attrs.get('gradiente_fundo') and attrs.get('imagem'):
             raise serializers.ValidationError(
-                "Informe apenas 'cor_fundo' ou 'imagem', não ambos."
+                "Informe apenas 'gradiente_fundo' ou 'imagem', não ambos."
             )
 
         return attrs
@@ -58,17 +87,17 @@ class PostagemInputSerializer(serializers.Serializer):
         instance.titulo = validated_data.get('titulo', instance.titulo)
         instance.corpo = validated_data.get('corpo', instance.corpo)
 
-        if 'cor_fundo' in validated_data:
-            instance.cor_fundo = validated_data.get('cor_fundo')
+        if 'gradiente_fundo' in validated_data:
+            instance.gradiente_fundo = validated_data.get('gradiente_fundo')
 
-            if instance.cor_fundo:
+            if instance.gradiente_fundo:
                 instance.imagem = None
 
         if 'imagem' in validated_data:
             instance.imagem = validated_data.get('imagem')
 
             if instance.imagem:
-                instance.cor_fundo = None
+                instance.gradiente_fundo = None
 
         instance.disponivel = validated_data.get('disponivel', instance.disponivel)
         instance.save()

@@ -52,11 +52,11 @@ class PostagemViewSetTests(TestCase):
         self.assertEqual(self.postagem.corpo, 'Corpo atualizado')
         self.assertFalse(self.postagem.disponivel)
 
-    def test_update_atualiza_cor_fundo_hexadecimal(self):
+    def test_update_atualiza_gradiente_fundo(self):
         request = self.factory.put(f'/api/postagem/{self.postagem.pk}/', {
             'titulo': 'Titulo atualizado',
             'corpo': 'Corpo atualizado',
-            'cor_fundo': '#1A2b3C',
+            'gradiente_fundo': 'linear-gradient(red, blue)',
         }, format='json')
         force_authenticate(request, user=self.usuario)
 
@@ -67,12 +67,12 @@ class PostagemViewSetTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.postagem.refresh_from_db()
-        self.assertEqual(self.postagem.cor_fundo, '#1A2b3C')
+        self.assertEqual(self.postagem.gradiente_fundo, 'linear-gradient(red, blue)')
         self.assertIsNone(self.postagem.imagem)
-        self.assertEqual(response.data['cor_fundo'], '#1A2b3C')
+        self.assertEqual(response.data['gradiente_fundo'], 'linear-gradient(red, blue)')
 
     def test_update_atualiza_imagem_por_url(self):
-        self.postagem.cor_fundo = '#FFFFFF'
+        self.postagem.gradiente_fundo = 'linear-gradient(red, blue)'
         self.postagem.save()
 
         request = self.factory.put(f'/api/postagem/{self.postagem.pk}/', {
@@ -89,7 +89,7 @@ class PostagemViewSetTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.postagem.refresh_from_db()
-        self.assertIsNone(self.postagem.cor_fundo)
+        self.assertIsNone(self.postagem.gradiente_fundo)
         self.assertEqual(self.postagem.imagem, 'https://example.com/fundo.png')
         self.assertEqual(response.data['imagem'], 'https://example.com/fundo.png')
 
@@ -123,11 +123,11 @@ class PostagemViewSetTests(TestCase):
         )
         upload_image_mock.assert_called_once()
 
-    def test_update_rejeita_cor_fundo_invalida(self):
+    def test_update_rejeita_gradiente_fundo_invalido(self):
         request = self.factory.put(f'/api/postagem/{self.postagem.pk}/', {
             'titulo': 'Titulo atualizado',
             'corpo': 'Corpo atualizado',
-            'cor_fundo': 'azul',
+            'gradiente_fundo': 'azul',
         }, format='json')
         force_authenticate(request, user=self.usuario)
 
@@ -138,13 +138,13 @@ class PostagemViewSetTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.postagem.refresh_from_db()
-        self.assertIsNone(self.postagem.cor_fundo)
+        self.assertIsNone(self.postagem.gradiente_fundo)
 
-    def test_update_rejeita_cor_fundo_e_imagem_juntas(self):
+    def test_update_rejeita_gradiente_fundo_e_imagem_juntas(self):
         request = self.factory.put(f'/api/postagem/{self.postagem.pk}/', {
             'titulo': 'Titulo atualizado',
             'corpo': 'Corpo atualizado',
-            'cor_fundo': '#FFFFFF',
+            'gradiente_fundo': 'linear-gradient(red, blue)',
             'imagem': 'https://example.com/fundo.png',
         }, format='json')
         force_authenticate(request, user=self.usuario)
@@ -156,7 +156,7 @@ class PostagemViewSetTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.postagem.refresh_from_db()
-        self.assertIsNone(self.postagem.cor_fundo)
+        self.assertIsNone(self.postagem.gradiente_fundo)
         self.assertIsNone(self.postagem.imagem)
 
     def test_update_nao_atualiza_postagem_de_outro_usuario(self):

@@ -49,7 +49,7 @@ class PostagemViewSet(ViewSet):
 
     @extend_schema(
         summary="Rota de criação de postagem.",
-        description="Recebe uma postagem e registra-a no sistema. Aceita cor_fundo hexadecimal ou imagem de fundo via URL ou arquivo.",
+        description="Recebe uma postagem e registra-a no sistema. Aceita gradiente_fundo (linear-gradient CSS) ou imagem de fundo via URL ou arquivo.",
         request=PostagemInputSerializer,
         responses={400: None, 201: PostagemOutputSerializer}
     )
@@ -72,7 +72,7 @@ class PostagemViewSet(ViewSet):
 
     @extend_schema(
         summary="Rota de atualização de postagem.",
-        description="Recebe uma postagem e atualiza-a se pertencer ao usuário autenticado. Aceita cor_fundo hexadecimal ou imagem de fundo via URL ou arquivo.",
+        description="Recebe uma postagem e atualiza-a se pertencer ao usuário autenticado. Aceita gradiente_fundo (linear-gradient CSS) ou imagem de fundo via URL ou arquivo.",
         request=PostagemInputSerializer,
         parameters=[OpenApiParameter("id", OpenApiTypes.INT, OpenApiParameter.PATH)],
         responses={400: None, 404: None, 200: PostagemOutputSerializer}

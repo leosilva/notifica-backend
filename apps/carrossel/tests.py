@@ -29,7 +29,7 @@ class ConteudoSerializerTest(SimpleTestCase):
             id=2,
             titulo="Postagem teste",
             corpo="Corpo da postagem",
-            cor_fundo="#123ABC",
+            gradiente_fundo="linear-gradient(red, blue)",
             publicado_em=datetime(2026, 6, 2, 10, 30),
             disponivel=True,
         )
@@ -38,4 +38,4 @@ class ConteudoSerializerTest(SimpleTestCase):
 
         self.assertEqual(data["tipo"], "postagem")
         self.assertEqual(data["publicado_em"], "2026-06-02T10:30:00")
-        self.assertEqual(data["cor_fundo"], "#123ABC")
+        self.assertEqual(data["gradiente_fundo"], "linear-gradient(red, blue)")

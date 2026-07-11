@@ -7,7 +7,7 @@ class PostagemOutputSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
     titulo = serializers.CharField()
     corpo = serializers.CharField()
-    cor_fundo = serializers.CharField(required=False, allow_null=True)
+    gradiente_fundo = serializers.CharField(required=False, allow_null=True)
     imagem = serializers.URLField(required=False, allow_null=True)
     publicado_em = serializers.DateTimeField(required=False)
     disponivel = serializers.BooleanField()
