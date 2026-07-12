@@ -29,9 +29,6 @@ class NoticiaSerializer(serializers.Serializer):
     disponivel = serializers.BooleanField()
     usuario = UsuarioSerializer(required=False)
 
-    def create(self, validated_data):
-        return Noticia.objects.create(**validated_data)
-
 
 class NoticiaInputSerializer(serializers.Serializer):
     titulo = serializers.CharField()
@@ -39,4 +36,16 @@ class NoticiaInputSerializer(serializers.Serializer):
     link = serializers.URLField()
     imagem = ImageFileOuString(required=False)
     disponivel = serializers.BooleanField()
-    
+
+    def create(self, validated_data):
+        return Noticia.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.titulo = validated_data.get('titulo', instance.titulo)
+        instance.corpo = validated_data.get('corpo', instance.corpo)
+        instance.link = validated_data.get('link', instance.link)
+        instance.imagem = validated_data.get('imagem', instance.imagem)
+        instance.disponivel = validated_data.get('disponivel', instance.disponivel)
+        instance.save()
+
+        return instance

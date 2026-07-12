@@ -22,11 +22,11 @@ class NoticiaViewSet(ViewSet):
         parameters=[OpenApiParameter("id", OpenApiTypes.INT, OpenApiParameter.PATH)],
         responses={404: None, 200: NoticiaSerializer}
     )
-    def retrieve(self, request, id):
+    def retrieve(self, request, pk):
         """Retorna uma notícia por id."""
         noticia = get_object_or_404(
-            Noticia, 
-            pk=id, 
+            Noticia,
+            pk=pk,
             usuario_id=request.user.id
         )
 
@@ -35,7 +35,7 @@ class NoticiaViewSet(ViewSet):
 
     @extend_schema(
         summary="Rota de visualização de listagem de notícias.",
-        description="Retorna todas as notícias.",
+        description="Retorna todas as notícias registradas pelo usuário autenticado.",
         responses={200: NoticiaSerializer(many=True)}
     )
     def list(self, request):
@@ -51,19 +51,45 @@ class NoticiaViewSet(ViewSet):
         summary="Rota de criação de notícia.",
         description="Recebe uma notícia e registra-a no sistema.",
         request=NoticiaInputSerializer,
-        responses={403: None, 201: NoticiaSerializer}
-    )  
+        responses={400: None, 403: None, 201: NoticiaSerializer}
+    )
     def create(self, request):
-        """Registra uma postagem de um usuário autorizado."""
+        """Registra uma notícia de um usuário autorizado."""
         if not request.user.is_authorized:
             return Response(status=403)
-        
-        serializer = NoticiaSerializer(data=request.data)
+
+        serializer = NoticiaInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        serializer.save(usuario=request.user)
+        noticia = serializer.save(usuario=request.user)
 
-        return Response(serializer.data, status=201)   # type: ignore
+        return Response(NoticiaSerializer(noticia).data, status=201)
+
+
+    @extend_schema(
+        summary="Rota de atualização de notícia.",
+        description="Recebe uma notícia e atualiza-a se pertencer ao usuário autenticado.",
+        request=NoticiaInputSerializer,
+        parameters=[OpenApiParameter("id", OpenApiTypes.INT, OpenApiParameter.PATH)],
+        responses={400: None, 403: None, 404: None, 200: NoticiaSerializer}
+    )
+    def update(self, request, pk):
+        """Atualiza uma notícia do usuário pelo id."""
+        if not request.user.is_authorized:
+            return Response(status=403)
+
+        noticia = get_object_or_404(
+            Noticia,
+            pk=pk,
+            usuario_id=request.user.id
+        )
+
+        serializer = NoticiaInputSerializer(noticia, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        noticia = serializer.save()
+
+        return Response(NoticiaSerializer(noticia).data, status=200)
 
 
     @extend_schema(
@@ -72,12 +98,13 @@ class NoticiaViewSet(ViewSet):
         parameters=[OpenApiParameter("id", OpenApiTypes.INT, OpenApiParameter.PATH)],
         responses={404: None, 200: str}
     )
-    def destroy(self, request, noticia_id):
+    def destroy(self, request, pk):
         """Deleta uma notícia do usuário pelo id."""
-        noticia = get_object_or_404(Noticia, pk=noticia_id)
-
-        if noticia.usuario_id != request.user.id:  # type: ignore
-            return Response(status=404)
+        noticia = get_object_or_404(
+            Noticia,
+            pk=pk,
+            usuario_id=request.user.id
+        )
 
         noticia.delete()
 

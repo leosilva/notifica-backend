@@ -1,0 +1,104 @@
+services:
+  web:
+    build:
+      context: .
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment: &app-environment
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      DB_NAME: ${DB_NAME:-notifica}
+      DB_HOST: db
+      DB_USER: ${DB_USER:-notifica}
+      DB_PASSWORD: ${DB_PASSWORD:-notifica}
+      DB_PORT: 3306
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      CHROMA_HOST: chroma
+      CHROMA_PORT: 8000
+      SUPER_USER_USERNAME: ${SUPER_USER_USERNAME}
+      SUPER_USER_PASSWORD: ${SUPER_USER_PASSWORD}
+      HF_TOKEN: ${HF_TOKEN}
+      NOTIFICA_EMBEDDING_MODEL: ${NOTIFICA_EMBEDDING_MODEL}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      chroma:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/api/health/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  celery_worker:
+    build:
+      context: .
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - .:/app
+    environment: *app-environment
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      chroma:
+        condition: service_started
+
+  celery_beat:
+    build:
+      context: .
+    command: celery -A core beat --loglevel=info
+    volumes:
+      - .:/app
+    environment: *app-environment
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      chroma:
+        condition: service_started
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-notifica}
+      MYSQL_USER: ${DB_USER:-notifica}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-notifica}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  chroma:
+    image: chromadb/chroma
+    restart: unless-stopped
+    volumes:
+      - chroma_data:/chroma/chroma
+
+volumes:
+  mysql_data:
+  chroma_data:

@@ -6,6 +6,8 @@ from apps.accounts.models import Usuario
 class Postagem(models.Model):
     titulo = models.CharField(max_length=128)
     corpo = models.CharField(max_length=324)
+    gradiente_fundo = models.CharField(max_length=512, null=True, blank=True)
+    imagem = models.URLField(null=True, blank=True)
     publicado_em = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     disponivel = models.BooleanField(default=True)  # type: ignore

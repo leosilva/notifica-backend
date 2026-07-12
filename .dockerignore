@@ -1,0 +1,12 @@
+.git
+.gitignore
+.venv
+.env
+.env.*
+__pycache__/
+*.py[codz]
+*.log
+.pytest_cache/
+.mypy_cache/
+.ropeproject/
+celerybeat-schedule

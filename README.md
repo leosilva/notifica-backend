@@ -69,6 +69,23 @@ SUPER_USER_PASSWORD=
 
 Ao configurar cada uma dessas variáveis, o backend está pronto para rodar.
 
+## Como rodar com Docker
+
+O projeto agora conta com uma stack Docker voltada ao ambiente de desenvolvimento, incluindo API Django, MySQL, Redis, Celery Worker, Celery Beat e Chroma.
+
+```bash
+cp .env.example .env
+
+docker compose up --build
+```
+
+Após subir os containers, a API ficará disponível em `http://localhost:8000/api/` e a documentação em `http://localhost:8000/api/docs/`.
+
+Observações importantes:
+
+- ajuste no `.env` as credenciais sensíveis, como `SECRET_KEY`, Cloudinary e Gemini;
+- se quiser manter os defaults da stack Docker, use `DB_HOST=db`, `DB_PORT=3306`, `CELERY_BROKER_URL=redis://redis:6379/0`, `CELERY_RESULT_BACKEND=redis://redis:6379/0`, `CHROMA_HOST=chroma` e `CHROMA_PORT=8000`.
+
 ## Créditos
 
 - Leo Silva, coordenador do projeto.

@@ -26,10 +26,25 @@ class ConteudoSerializer(serializers.Serializer):
     corpo = serializers.CharField()
     link = serializers.URLField(required=False, allow_null=True, allow_blank=True)
     imagem = ImageFileOuString(required=False, allow_null=True)
+    gradiente_fundo = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True, max_length=512
+    )
     publicado_em = serializers.SerializerMethodField()
     disponivel = serializers.BooleanField()
     usuario = UsuarioSerializer(required=False)
     tipo = serializers.ChoiceField(choices=["postagem", "noticia"], write_only=True)
+
+    def validate(self, attrs):
+        if (
+            attrs.get("tipo") == "postagem"
+            and attrs.get("gradiente_fundo")
+            and attrs.get("imagem")
+        ):
+            raise serializers.ValidationError(
+                "Informe apenas 'gradiente_fundo' ou 'imagem', não ambos."
+            )
+
+        return attrs
 
     def get_publicado_em(self, instance):
         publicado_em = getattr(instance, "publicado_em", None)
@@ -54,10 +69,10 @@ class ConteudoSerializer(serializers.Serializer):
 
         if tipo == "noticia":
             validated_data["sumario"] = validated_data.pop("corpo")
+            validated_data.pop("gradiente_fundo", None)
             return Noticia.objects.create(**validated_data)
         elif tipo == "postagem":
             validated_data.pop("link", None)
-            validated_data.pop("imagem", None)
             return Postagem.objects.create(**validated_data)
         else:
             raise ValueError("Tipo não identificado.")

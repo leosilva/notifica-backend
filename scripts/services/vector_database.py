@@ -1,4 +1,5 @@
 from uuid import uuid4
+import os
 
 import chromadb
 
@@ -12,7 +13,10 @@ class VectorDatabase:
     """
 
     def __init__(self) -> None:
-        self.__client = chromadb.HttpClient()
+        self.__client = chromadb.HttpClient(
+            host=os.getenv('CHROMA_HOST', 'localhost'),
+            port=int(os.getenv('CHROMA_PORT', '8000')),
+        )
         self.__collection = self.__client.get_or_create_collection(
             "noticias", embedding_function=EmbeddingFunctionService()
         )

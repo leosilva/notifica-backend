@@ -6,6 +6,7 @@ class UsuarioSerializer(serializers.Serializer):
     username = serializers.CharField()
     nome = serializers.SerializerMethodField()
     email = serializers.EmailField()
+    cargo = serializers.CharField(required=False)
 
 
     def get_nome(self, usuario) -> str:
