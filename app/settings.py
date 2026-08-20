@@ -13,3 +13,5 @@ class Settings:
     API_TITLE = 'notIFica'
     API_VERSION = 'v1'
     OPENAPI_VERSION = '3.0.2'
+
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
