@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from flask import redirect
 from flask_jwt_extended import (
     create_access_token,
@@ -23,7 +25,12 @@ def get_user_data(data: str) -> dict[str, str]:
 def authenticate_user(usuario):
     response = redirect(BASE_FRONTEND_URL)
 
-    set_access_cookies(response, create_access_token(identity=str(usuario.id)))
-    set_refresh_cookies(response, create_refresh_token(identity=str(usuario.id)))
+    set_access_cookies(response, create_access_token(
+        identity=str(usuario.id), expires_delta=timedelta(minutes=5)
+    ))
+
+    set_refresh_cookies(response, create_refresh_token(
+        identity=str(usuario.id), expires_delta=timedelta(days=7)
+    ))
 
     return response

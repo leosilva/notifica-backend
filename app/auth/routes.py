@@ -1,16 +1,9 @@
-from datetime import timedelta
-
 from flask import url_for
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-)
 from sqlalchemy import select
 
 from app import db, oauth
 from app.auth import auth_bp, utils
 from app.auth.models import Usuario
-from app.auth.schemas import UsuarioPostSchema
 
 
 @auth_bp.route('/suap/login')
