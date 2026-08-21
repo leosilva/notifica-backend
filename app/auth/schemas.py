@@ -3,9 +3,9 @@ from marshmallow.validate import Length
 
 
 class UsuarioPostSchema(ma.Schema):
-    matricula = ma.fields.Str(required=True)
+    matricula = ma.fields.String(required=True)
 
-    senha = ma.fields.Str(
+    senha = ma.fields.String(
         required=True,
         validate=Length(
             min=8,

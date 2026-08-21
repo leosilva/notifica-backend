@@ -18,7 +18,6 @@ class Usuario(db.Model):
     nome: so.Mapped[str] = so.mapped_column(sa.String(255))
     matricula: so.Mapped[str] = so.mapped_column(sa.String(255), unique=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(255), unique=True)
-    senha: so.Mapped[str] = so.mapped_column(sa.String(255))
     role: so.Mapped[Role] = so.mapped_column(sa.Enum(Role), default=Role.ALUNO)
     criado_em: so.Mapped[datetime] = so.mapped_column(sa.DateTime(), default=datetime.now)
     atualizado_em: so.Mapped[datetime] = so.mapped_column(

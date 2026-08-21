@@ -1,27 +1,29 @@
-import requests
+from flask import redirect
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    set_access_cookies,
+    set_refresh_cookies,
+)
 
 BASE_SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
+BASE_FRONTEND_URL = 'http://localhost:5179'
 
 
-def get_suap_token(data: dict[str, str]) -> str:
-    res = requests.post(f'{BASE_SUAP_API_URL}/token/pair', json={
-        'username': data['matricula'],
-        'password': data['senha'],
-    })
-    print(res.status_code)
-    res.raise_for_status()
-    return res.json()['access']
-
-
-def get_user_data(token: str) -> dict[str, str]:
-    res = requests.get(f'{BASE_SUAP_API_URL}/rh/eu/', headers={
-        'Authorization': f'Bearer {token}'
-    })
-    body = res.json()
-
+def get_user_data(data: str) -> dict[str, str]:
     return {
-        'nome': body.get('nome_social') or body.get('nome_registro'),
-        'email': body.get('email_google_classroom'),
-        'campus': body.get('campus'),
-        'role': body.get('tipo_usuario').upper(),
+        'matricula': data.get('identificacao'),
+        'nome': data.get('nome_social') or data.get('nome_registro'),
+        'email': data.get('email_google_classroom'),
+        'campus': data.get('campus'),
+        'role': data.get('tipo_usuario').upper(),
     }
+
+
+def authenticate_user(usuario):
+    response = redirect(BASE_FRONTEND_URL)
+
+    set_access_cookies(response, create_access_token(identity=str(usuario.id)))
+    set_refresh_cookies(response, create_refresh_token(identity=str(usuario.id)))
+
+    return response
