@@ -63,7 +63,7 @@ def detail_postagem(postagem_id):
     )
 
     if not postagem:
-        return abort(404)
+        return abort(404, message='Nenhuma postagem encontrada.')
 
     return postagem
 
@@ -83,7 +83,7 @@ def atualizar_postagem(data, files, postagem_id):
     )
 
     if not postagem:
-        return abort(404)
+        return abort(404, message='Nenhuma postagem encontrada.')
 
     postagem.titulo = data['titulo']
 
@@ -102,7 +102,7 @@ def atualizar_postagem(data, files, postagem_id):
     gradiente = data.get('gradiente')
 
     if bool(imagem) == bool(gradiente):
-        return abort(422)
+        return abort(422, message='Apenas um elemento de background deve ser selecionado..')
 
     if bool(imagem) and imagem.filename != '':
         res = uploader.upload(imagem)
@@ -114,7 +114,7 @@ def atualizar_postagem(data, files, postagem_id):
 
     db.session.commit()
 
-    return postagem, 200
+    return postagem
 
 
 @postagens_bp.route('/', methods=['POST'])
@@ -128,7 +128,7 @@ def postar_postagem(data, files):
     gradiente = data.get('gradiente')
 
     if bool(imagem) == bool(gradiente):
-        return abort(400)
+        return abort(400, message='Apenas um elemento de background deve ser selecionado.')
 
     estado = moderar_postagem(data['corpo'])
     visibilidade = data.get('visibilidade') if estado == Estado.APROVADA else Visibilidade.RASCUNHO
@@ -151,7 +151,7 @@ def postar_postagem(data, files):
     db.session.add(postagem)
     db.session.commit()
 
-    return postagem, 201
+    return postagem
 
 
 @postagens_bp.route('/<int:postagem_id>', methods=['DELETE'])
@@ -167,9 +167,9 @@ def delete_postagem(postagem_id):
     )
 
     if not postagem:
-        return abort(404)
+        return abort(404, message='Nenhuma postagem encontrada.')
 
     db.session.delete(postagem)
     db.session.commit()
 
-    return None
+    return

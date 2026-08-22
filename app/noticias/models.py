@@ -29,7 +29,6 @@ class Noticia(db.Model):
         sa.Enum(Visibilidade),
         default=Visibilidade.PUBLICADA
     )
-    publicado_em: so.Mapped[datetime | None] = so.mapped_column(sa.DateTime(), nullable=True)
     criado_em: so.Mapped[datetime] = so.mapped_column(sa.DateTime(), default=datetime.now)
     atualizado_em: so.Mapped[datetime] = so.mapped_column(
         sa.DateTime(),
