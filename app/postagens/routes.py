@@ -4,20 +4,26 @@ from sqlalchemy import select
 
 from app import db
 from app.auth.models import Role
-from app.moderacao.services import moderar_postagem
+from app.auth.permissions import roles_required
 from app.postagens import postagens_bp
 from app.postagens.models import Estado, Postagem, Visibilidade
+from app.postagens.moderacao import moderar_postagem
 from app.postagens.schemas import (
     PostagemPostSchema,
     PostagemQuerySchema,
     PostagemSchema,
 )
 
+# TODOs:
+# - implementar views de administração (listagem de postagens em revisão, update de estado e deleção de conteuúdo)
+# - implementar serviço da cloudinary para salvar imagens
+
 
 @postagens_bp.route('/me')
 @postagens_bp.arguments(PostagemQuerySchema, location='query')
 @postagens_bp.response(200, PostagemSchema(many=True, exclude=['autor']))
 @jwt_required()
+@roles_required(Role.ALUNO)
 def minhas_postagens(query):
     estado = query.get('estado')
     visibilidade = query.get('visibilidade')
@@ -42,6 +48,7 @@ def minhas_postagens(query):
 @postagens_bp.route('/<int:postagem_id>')
 @postagens_bp.response(200, PostagemSchema(exclude=['autor']))
 @jwt_required()
+@roles_required(Role.ALUNO)
 def detail_postagem(postagem_id):
     postagem = db.session.scalar(
         select(Postagem).where(
@@ -60,6 +67,7 @@ def detail_postagem(postagem_id):
 @postagens_bp.arguments(schema=PostagemPostSchema)
 @postagens_bp.response(200, PostagemSchema(exclude=['autor']))
 @jwt_required()
+@roles_required(Role.ALUNO)
 def atualizar_postagem(data, postagem_id):
     postagem = db.session.scalar(
         select(Postagem).where(
@@ -87,10 +95,11 @@ def atualizar_postagem(data, postagem_id):
     return postagem, 200
 
 
-@postagens_bp.route('/<int:postagem_id>', methods=['POST'])
+@postagens_bp.route('/', methods=['POST'])
 @postagens_bp.arguments(schema=PostagemPostSchema)
 @postagens_bp.response(201, schema=PostagemSchema)
 @jwt_required()
+@roles_required(Role.ALUNO)
 def postar_postagem(data):
     postagem = Postagem(
         titulo=data['titulo'],
@@ -113,6 +122,7 @@ def postar_postagem(data):
 @postagens_bp.route('/<int:postagem_id>', methods=['DELETE'])
 @postagens_bp.response(204)
 @jwt_required()
+@roles_required(Role.ALUNO)
 def delete_postagem(postagem_id):
     postagem = db.session.scalar(
         select(Postagem).where(

@@ -1,7 +1,7 @@
 from typing import Any
 
-from app.moderacao.providers import DeepseekClient
 from app.postagens.models import Estado
+from app.postagens.moderacao.providers import DeepseekClient
 
 
 def moderar_postagem(conteudo: str) -> Any:
