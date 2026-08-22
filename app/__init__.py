@@ -42,9 +42,11 @@ oauth.register(
 cloudinary.config(secure=True)
 
 from app.auth import auth_bp
+from app.noticias import noticias_bp
 from app.postagens import postagens_bp
 
 api.register_blueprint(auth_bp)
 api.register_blueprint(postagens_bp)
+api.register_blueprint(noticias_bp)
 
 from . import routes
