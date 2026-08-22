@@ -1,4 +1,5 @@
 import marshmallow as ma
+from flask_smorest.fields import Upload
 from marshmallow import validate
 
 from app.auth.schema import UsuarioSchema
@@ -8,18 +9,13 @@ from app.postagens.models import Estado, Visibilidade
 class PostagemPostSchema(ma.Schema):
     titulo = ma.fields.String(required=True, validate=validate.Length(max=128))
     corpo = ma.fields.String(required=True, validate=validate.Length(max=324))
-    imagem = ma.fields.Raw()
+    imagem = ma.fields.Raw(metadata={"type": "string", "format": "binary"})
     gradiente = ma.fields.String(validate=validate.Length(max=500))
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
 
 
-    @ma.validates_schema
-    def validate_background(self, data, **kwargs):
-        if not ('imagem' in data or 'gradiente' in data):
-            raise ma.ValidationError('Um campo de fundo deve ser passado.')
-
-        if ('imagem' in data and 'gradiente' in data):
-            raise ma.ValidationError('Apenas um campo de fundo deve ser passado.')
+class PostagemImagemSchema(ma.Schema):
+    imagem = Upload()
 
 
 class PostagemSchema(ma.Schema):

@@ -1,5 +1,6 @@
 import os
 
+import cloudinary
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask
@@ -37,6 +38,8 @@ oauth.register(
     access_token_url="https://suap.ifrn.edu.br/o/token/",
     api_base_url="https://suap.ifrn.edu.br/api/",
 )
+
+cloudinary.config(secure=True)
 
 from app.auth import auth_bp
 from app.postagens import postagens_bp
