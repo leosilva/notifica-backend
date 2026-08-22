@@ -1,5 +1,4 @@
 from cloudinary import uploader
-from flask import request
 from flask_jwt_extended import current_user, jwt_required
 from flask_smorest import abort
 from sqlalchemy import select
@@ -120,14 +119,8 @@ def atualizar_postagem(data, files, postagem_id):
 
 @postagens_bp.route('/', methods=['POST'])
 @jwt_required()
-@postagens_bp.arguments(
-    schema=PostagemPostSchema,
-    location='form'
-)
-@postagens_bp.arguments(
-    schema=PostagemImagemSchema,
-    location='files'
-)
+@postagens_bp.arguments(schema=PostagemPostSchema, location='form')
+@postagens_bp.arguments(schema=PostagemImagemSchema, location='files')
 @postagens_bp.response(201, schema=PostagemSchema)
 @roles_required(Role.ALUNO)
 def postar_postagem(data, files):
