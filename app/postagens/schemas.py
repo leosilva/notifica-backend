@@ -10,7 +10,7 @@ class PostagemPostSchema(ma.Schema):
     titulo = ma.fields.String(required=True, validate=validate.Length(max=128))
     corpo = ma.fields.String(required=True, validate=validate.Length(max=324))
     imagem = ma.fields.Raw(metadata={"type": "string", "format": "binary"})
-    gradiente = ma.fields.String(validate=validate.Length(max=500))
+    gradiente = ma.fields.String(validate=validate.Length(max=64))
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
 
 

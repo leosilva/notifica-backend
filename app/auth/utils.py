@@ -1,5 +1,7 @@
+import os
 from datetime import timedelta
 
+from dotenv import load_dotenv
 from flask import redirect
 from flask_jwt_extended import (
     create_access_token,
@@ -8,8 +10,10 @@ from flask_jwt_extended import (
     set_refresh_cookies,
 )
 
+_ = load_dotenv()
+
 BASE_SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
-BASE_FRONTEND_URL = 'http://localhost:5179'
+BASE_FRONTEND_URL = os.getenv('BASE_FRONTEND_URL')
 
 
 def get_user_data(data: str) -> dict[str, str]:

@@ -8,7 +8,7 @@ from app import db
 from app.auth.models import Role
 from app.auth.permissions import roles_required
 from app.postagens import postagens_bp
-from app.postagens.models import Postagem, Visibilidade
+from app.postagens.models import Estado, Postagem, Visibilidade
 from app.postagens.moderacao import moderar_postagem
 from app.postagens.schemas import (
     PostagemImagemSchema,
@@ -22,12 +22,13 @@ from app.postagens.schemas import (
 # (listagem de postagens em revisão,
 # update de estado e deleção de conteúdo)
 # - condensação de imagens para display no carrossel
+# deleção de imagens do cloudinary
 
 
 @postagens_bp.route('/me')
+@jwt_required()
 @postagens_bp.arguments(PostagemQuerySchema, location='query')
 @postagens_bp.response(200, PostagemSchema(many=True, exclude=['autor']))
-@jwt_required()
 @roles_required(Role.ALUNO)
 def minhas_postagens(query):
     estado = query.get('estado')
@@ -51,8 +52,8 @@ def minhas_postagens(query):
 
 
 @postagens_bp.route('/<int:postagem_id>')
-@postagens_bp.response(200, PostagemSchema(exclude=['autor']))
 @jwt_required()
+@postagens_bp.response(200, PostagemSchema(exclude=['autor']))
 @roles_required(Role.ALUNO)
 def detail_postagem(postagem_id):
     postagem = db.session.scalar(
@@ -69,11 +70,12 @@ def detail_postagem(postagem_id):
 
 
 @postagens_bp.route('/<int:postagem_id>', methods=['PUT'])
-@postagens_bp.arguments(schema=PostagemPostSchema, location='form')
-@postagens_bp.response(200, PostagemSchema(exclude=['autor']))
 @jwt_required()
+@postagens_bp.arguments(schema=PostagemPostSchema, location='form')
+@postagens_bp.arguments(schema=PostagemImagemSchema, location='files')
+@postagens_bp.response(200, PostagemSchema(exclude=['autor']))
 @roles_required(Role.ALUNO)
-def atualizar_postagem(data, postagem_id):
+def atualizar_postagem(data, files, postagem_id):
     postagem = db.session.scalar(
         select(Postagem).where(
             Postagem.id == postagem_id,
@@ -85,8 +87,6 @@ def atualizar_postagem(data, postagem_id):
         return abort(404)
 
     postagem.titulo = data['titulo']
-    postagem.gradiente = data.get('gradiente', None)
-    postagem.visibilidade = data['visibilidade']
 
     if postagem.corpo != data['corpo']:
         postagem.estado = (
@@ -94,10 +94,24 @@ def atualizar_postagem(data, postagem_id):
         )
         postagem.corpo = data['corpo']
 
-    imagem = request.files.get('imagem')
-    if imagem and imagem.filename != '':
+    if postagem.estado != Estado.APROVADA:
+        postagem.visibilidade = Visibilidade.RASCUNHO
+    elif data.get('visibilidade'):
+        postagem.visibilidade = data.get('visibilidade')
+
+    imagem = files.get('imagem')
+    gradiente = data.get('gradiente')
+
+    if bool(imagem) == bool(gradiente):
+        return abort(422)
+
+    if bool(imagem) and imagem.filename != '':
         res = uploader.upload(imagem)
+        postagem.gradiente = None
         postagem.imagem = res.get('secure_url')
+    elif bool(gradiente):
+        postagem.imagem = None
+        postagem.gradiente = gradiente
 
     db.session.commit()
 
@@ -105,6 +119,7 @@ def atualizar_postagem(data, postagem_id):
 
 
 @postagens_bp.route('/', methods=['POST'])
+@jwt_required()
 @postagens_bp.arguments(
     schema=PostagemPostSchema,
     location='form'
@@ -114,7 +129,6 @@ def atualizar_postagem(data, postagem_id):
     location='files'
 )
 @postagens_bp.response(201, schema=PostagemSchema)
-@jwt_required()
 @roles_required(Role.ALUNO)
 def postar_postagem(data, files):
     imagem = files.get('imagem')
@@ -123,12 +137,15 @@ def postar_postagem(data, files):
     if bool(imagem) == bool(gradiente):
         return abort(400)
 
+    estado = moderar_postagem(data['corpo'])
+    visibilidade = data.get('visibilidade') if estado == Estado.APROVADA else Visibilidade.RASCUNHO
+
     postagem = Postagem(
         titulo=data['titulo'],
         corpo=data['corpo'],
         gradiente=gradiente,
-        estado=moderar_postagem(data['corpo']),
-        visibilidade=data.get('visibilidade') or Visibilidade.PUBLICADA,
+        estado=estado,
+        visibilidade=visibilidade or Visibilidade.PUBLICADA,
         autor=current_user
     )
 
@@ -145,8 +162,8 @@ def postar_postagem(data, files):
 
 
 @postagens_bp.route('/<int:postagem_id>', methods=['DELETE'])
-@postagens_bp.response(204)
 @jwt_required()
+@postagens_bp.response(204)
 @roles_required(Role.ALUNO)
 def delete_postagem(postagem_id):
     postagem = db.session.scalar(
