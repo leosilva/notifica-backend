@@ -8,7 +8,7 @@ from app import db
 from app.auth.models import Role
 from app.auth.permissions import roles_required
 from app.postagens import postagens_bp
-from app.postagens.models import Estado, Postagem, Visibilidade
+from app.postagens.models import Postagem, Visibilidade
 from app.postagens.moderacao import moderar_postagem
 from app.postagens.schemas import (
     PostagemImagemSchema,

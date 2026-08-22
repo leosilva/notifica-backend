@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import marshmallow as ma
-from marshmallow import validate
 
 from app.auth.models import Role
 
