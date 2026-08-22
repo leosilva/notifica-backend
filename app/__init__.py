@@ -21,6 +21,14 @@ migrate = Migrate(app, db)
 jwt = JWTManager(app)
 oauth = OAuth(app)
 
+from app.auth.models import Usuario
+
+
+@jwt.user_lookup_loader
+def user_lookup(_jwt_header, jwt_data):
+    return Usuario.query.get(jwt_data['sub'])
+
+
 oauth.register(
     name='suap',
     client_id=os.getenv('SUAP_CLIENT_ID'),
