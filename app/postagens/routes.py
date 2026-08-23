@@ -121,7 +121,7 @@ def atualizar_postagem(data, files, postagem_id):
 @jwt_required()
 @postagens_bp.arguments(schema=PostagemPostSchema, location='form')
 @postagens_bp.arguments(schema=PostagemImagemSchema, location='files')
-@postagens_bp.response(201, schema=PostagemSchema)
+@postagens_bp.response(201, schema=PostagemSchema(exclude=['autor']))
 @roles_required(Role.ALUNO)
 def postar_postagem(data, files):
     imagem = files.get('imagem')
