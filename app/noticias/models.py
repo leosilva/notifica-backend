@@ -19,7 +19,7 @@ class Fonte(enum.Enum):
 class Noticia(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     titulo: so.Mapped[str] = so.mapped_column(sa.String(255))
-    corpo: so.Mapped[str] = so.mapped_column(sa.Text())
+    corpo: so.Mapped[str] = so.mapped_column(sa.Text(), nullable=True)
     url: so.Mapped[str | None] = so.mapped_column(sa.String(512), nullable=True, unique=True)
     imagem: so.Mapped[str | None] = so.mapped_column(sa.String(512), nullable=True)
     fonte: so.Mapped[Fonte | None] = so.mapped_column(sa.Enum(Fonte), nullable=True)
