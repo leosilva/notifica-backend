@@ -1,7 +1,7 @@
 [project]
 name = "notifica"
 version = "0.1.0"
-description = "Add your description here"
+description = "Uma plataforma para gerenciamento de postagens e notícias publicadas por alunos, servidores e serviços externos, pensada para a comunicação institucional do IFRN Ceará-Mirim."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
