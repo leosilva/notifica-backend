@@ -102,6 +102,9 @@ Sua execução periódica depende do ambiente de configuração.
 
 - Implementação de blueprint para administradores;
 - Sistema robusto para deduplicação de notícias;
+- Condensação de imagens para display no carrossel;
+- Deleção de imagens do cloudinary;
+- Melhorar a precisão da coleta de imagens dos feeds RSS;
 
 ## Autores
 

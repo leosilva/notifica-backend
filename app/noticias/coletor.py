@@ -4,9 +4,6 @@ from sqlalchemy.exc import IntegrityError
 from app import app, db
 from app.noticias.models import Fonte, Noticia
 
-# TODOs
-# - melhorar a coleta de imagens
-
 RSS_FEEDS = {
     'uol': 'https://www.uol.com.br/vueland/api/?loadComponent=XmlFeedRss',
     'metropoles': 'https://metropoleonline.com.br/rss/latest-posts',

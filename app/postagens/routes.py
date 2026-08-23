@@ -16,13 +16,6 @@ from app.postagens.schemas import (
     PostagemSchema,
 )
 
-# TODOs:
-# - implementar views de administração ex:
-# (listagem de postagens em revisão,
-# update de estado e deleção de conteúdo)
-# - condensação de imagens para display no carrossel
-# deleção de imagens do cloudinary
-
 
 @postagens_bp.route('/me')
 @jwt_required()
