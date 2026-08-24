@@ -1,12 +1,8 @@
-from datetime import timedelta
-
 from flask import jsonify, redirect, url_for
 from flask_jwt_extended import (
     create_access_token,
-    create_refresh_token,
     current_user,
     jwt_required,
-    set_refresh_cookies,
     unset_jwt_cookies,
 )
 from flask_jwt_extended.utils import set_access_cookies
@@ -79,7 +75,7 @@ def refresh_token():
     return response
 
 
-@auth_bp.route('/logout')
+@auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 @auth_bp.response(200)
 def logout():
