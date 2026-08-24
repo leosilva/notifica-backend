@@ -78,12 +78,19 @@ def atualizar_postagem(data, files, postagem_id):
     if not postagem:
         return abort(404, message='Nenhuma postagem encontrada.')
 
-    postagem.titulo = data['titulo']
 
-    if postagem.corpo != data['corpo']:
+    if (
+        postagem.titulo != data['titulo']
+        or postagem.corpo != data['corpo']
+    ):
         postagem.estado = (
-            moderar_postagem(data['corpo'])
+            moderar_postagem({
+                'titulo': data['titulo'],
+                'corpo': data['corpo']
+            })
         )
+
+        postagem.titulo = data['titulo']
         postagem.corpo = data['corpo']
 
     if postagem.estado != Estado.APROVADA:
@@ -123,7 +130,11 @@ def postar_postagem(data, files):
     if bool(imagem) == bool(gradiente):
         return abort(400, message='Apenas um elemento de background deve ser selecionado.')
 
-    estado = moderar_postagem(data['corpo'])
+    estado = moderar_postagem({
+        'titulo': data['titulo'],
+        'corpo': data['corpo']
+    })
+
     visibilidade = data.get('visibilidade') if estado == Estado.APROVADA else Visibilidade.RASCUNHO
 
     postagem = Postagem(

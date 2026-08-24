@@ -41,12 +41,14 @@ def suap_callback():
 
     if not usuario:
         usuario = Usuario(
-            nome=user_data['nome'],
             matricula=user_data['matricula'],
-            email=user_data['email'],
-            role=user_data['role'],
         )
         db.session.add(usuario)
-        db.session.commit()
+
+    usuario.nome = user_data['nome']
+    usuario.email = user_data['email']
+    usuario.role = user_data['role']
+
+    db.session.commit()
 
     return utils.authenticate_user(usuario)

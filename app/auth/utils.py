@@ -10,19 +10,21 @@ from flask_jwt_extended import (
     set_refresh_cookies,
 )
 
+from app.auth.models import Role
+
 _ = load_dotenv()
 
 BASE_SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
 BASE_FRONTEND_URL = os.getenv('BASE_FRONTEND_URL')
 
 
-def get_user_data(data: str) -> dict[str, str]:
+def get_user_data(data: dict) -> dict[str, str | Role | None]:
     return {
         'matricula': data.get('identificacao'),
         'nome': data.get('nome_social') or data.get('nome_registro'),
         'email': data.get('email_google_classroom'),
         'campus': data.get('campus'),
-        'role': data.get('tipo_usuario').upper(),
+        'role': Role(data.get('tipo_usuario', '').lower()),
     }
 
 

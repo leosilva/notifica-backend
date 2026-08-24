@@ -4,7 +4,7 @@ from app.postagens.models import Estado
 from app.postagens.moderacao.providers import DeepseekClient
 
 
-def moderar_postagem(conteudo: str) -> Any:
+def moderar_postagem(conteudo: dict[str, str]) -> Any:
     return Estado(DeepseekClient.chat([
         {
             'role': 'system',
@@ -17,6 +17,6 @@ def moderar_postagem(conteudo: str) -> Any:
         },
         {
             'role': 'user',
-            'content': conteudo
+            'content': str(conteudo)
         }
     ]))
