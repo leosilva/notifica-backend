@@ -11,6 +11,14 @@ from sqlalchemy import select
 from app import db, oauth
 from app.auth import auth_bp, utils
 from app.auth.models import Usuario
+from app.auth.schema import UsuarioSchema
+
+
+@auth_bp.route('/me')
+@jwt_required()
+@auth_bp.response(200, UsuarioSchema)
+def me():
+    return current_user
 
 
 @auth_bp.route('/suap/login')
