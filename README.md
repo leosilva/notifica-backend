@@ -57,7 +57,9 @@ Defina as variáveis de ambiente:
 ```bash
 SECRET_KEY=
 
-SQLALCHEMY_DATABASE_URI=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
 
 JWT_SECRET_KEY=
 
