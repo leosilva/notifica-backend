@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from typing import final
 
 from dotenv import load_dotenv
@@ -20,3 +21,5 @@ class Settings:
 
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_TOKEN_LOCATION = ['headers', 'cookies']
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=5)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)

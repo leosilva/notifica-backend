@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 
 from dotenv import load_dotenv
 from flask import redirect
@@ -15,7 +14,7 @@ from app.auth.models import Role
 _ = load_dotenv()
 
 BASE_SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
-BASE_FRONTEND_URL = os.getenv('BASE_FRONTEND_URL')
+BASE_FRONTEND_URL = os.getenv('BASE_FRONTEND_URL', '')
 
 
 def get_user_data(data: dict) -> dict[str, str | Role | None]:
@@ -31,14 +30,10 @@ def get_user_data(data: dict) -> dict[str, str | Role | None]:
 def authenticate_user(usuario):
     response = redirect(BASE_FRONTEND_URL)
 
-    access = create_access_token(
-        identity=str(usuario.id), expires_delta=timedelta(minutes=5)
-    )
-    set_access_cookies(response, access)
+    access = create_access_token(identity=str(usuario.id))
+    refresh = create_refresh_token(identity=str(usuario.id))
 
-    refresh = create_refresh_token(
-        identity=str(usuario.id), expires_delta=timedelta(days=7)
-    )
+    set_access_cookies(response, access)
     set_refresh_cookies(response, refresh)
 
     return response
