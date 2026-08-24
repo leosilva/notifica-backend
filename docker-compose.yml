@@ -1,0 +1,26 @@
+services:
+  notifica:
+    image: notifica
+    ports:
+      - 8000:8000
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - SUAP_CLIENT_ID=${SUAP_CLIENT_ID}
+      - SUAP_CLIENT_SECRET=${SUAP_CLIENT_SECRET}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - CLOUDINARY_URL=${CLOUDINARY_URL}
+      - BASE_FRONTEND_URL=${BASE_FRONTEND_URL}
+
+  db:
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}

@@ -10,7 +10,7 @@ _ = load_dotenv()
 class Settings:
     SECRET_KEY = os.getenv('SECRET_KEY')
 
-    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:3306/{os.getenv('DB_NAME')}'
 
     API_TITLE = 'notIFica'
     API_VERSION = 'v1'
