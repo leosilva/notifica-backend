@@ -25,15 +25,3 @@ def get_user_data(data: dict) -> dict[str, str | Role | None]:
         'campus': data.get('campus'),
         'role': Role(data.get('tipo_usuario', '').lower()),
     }
-
-
-def authenticate_user(usuario):
-    response = redirect(BASE_FRONTEND_URL)
-
-    access = create_access_token(identity=str(usuario.id))
-    refresh = create_refresh_token(identity=str(usuario.id))
-
-    set_access_cookies(response, access)
-    set_refresh_cookies(response, refresh)
-
-    return response

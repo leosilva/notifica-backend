@@ -1,8 +1,10 @@
-from flask import jsonify, redirect, url_for
+from flask import jsonify, make_response, redirect, url_for
 from flask_jwt_extended import (
     create_access_token,
+    create_refresh_token,
     current_user,
     jwt_required,
+    set_refresh_cookies,
     unset_jwt_cookies,
 )
 from flask_jwt_extended.utils import set_access_cookies
@@ -32,6 +34,7 @@ def suap_login():
 
 
 @auth_bp.route("/suap/callback")
+@auth_bp.response(201, schema=UsuarioSchema)
 def suap_callback():
     _ = oauth.suap.authorize_access_token()
 
@@ -66,7 +69,15 @@ def suap_callback():
 
     db.session.commit()
 
-    return utils.authenticate_user(usuario)
+    res = make_response(UsuarioSchema().dump(usuario), 201)
+
+    access = create_access_token(identity=str(usuario.id))
+    set_access_cookies(res, access)
+
+    refresh = create_refresh_token(identity=str(usuario.id))
+    set_refresh_cookies(res, refresh)
+
+    return res
 
 
 @auth_bp.route('/refresh', methods=['POST'])
