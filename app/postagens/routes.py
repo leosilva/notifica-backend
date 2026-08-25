@@ -2,6 +2,7 @@ from cloudinary import uploader
 from flask_jwt_extended import current_user, jwt_required
 from flask_smorest import abort
 from sqlalchemy import select
+from sqlalchemy.sql.default_comparator import roles
 
 from app import db
 from app.auth.models import Role
@@ -13,6 +14,7 @@ from app.postagens.schemas import (
     PostagemImagemSchema,
     PostagemPostSchema,
     PostagemQuerySchema,
+    PostagemReviewSchema,
     PostagemSchema,
 )
 
@@ -177,3 +179,44 @@ def delete_postagem(postagem_id):
     db.session.commit()
 
     return
+
+
+@postagens_bp.route('/')
+@jwt_required()
+@postagens_bp.arguments(PostagemReviewSchema(), location='query')
+@postagens_bp.response(200, PostagemSchema(many=True))
+@roles_required(Role.ADMIN)
+def listar_postagens_nao_aprovadas(query):
+    stmt = select(Postagem).where(
+        Postagem.estado != Estado.APROVADA
+    )
+
+    estado = query.get('estado')
+
+    if estado:
+        stmt = stmt.where(Postagem.estado == estado)
+
+    return db.session.scalars(stmt).all()
+
+
+@postagens_bp.route('/revisar/<int:postagem_id>', methods=['POST'])
+@jwt_required()
+@roles_required(Role.ADMIN)
+@postagens_bp.arguments(schema=PostagemReviewSchema, location='query')
+@postagens_bp.response(204)
+def revisar_postagem(postagem_id: int, estado: Estado):
+    if estado == Estado.REVISAO:
+        return abort(404, message='Você não pode colocar uma postagem sob revisão.')
+
+    postagem = db.session.scalar(
+        select(Postagem).where(
+            Postagem.id == postagem_id,
+            Postagem.estado == Estado.REVISAO,
+        )
+    )
+
+    if not postagem:
+        return abort(404, message='Postagem em estado de revisão não encontrada.')
+
+    postagem.estado = estado
+    db.session.commit()

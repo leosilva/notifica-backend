@@ -32,3 +32,13 @@ class PostagemSchema(ma.Schema):
 class PostagemQuerySchema(ma.Schema):
     estado = ma.fields.Enum(Estado, by_value=True)
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
+
+
+class PostagemReviewSchema(ma.Schema):
+    estado = ma.fields.Enum(
+        Estado,
+        by_value=True,
+        validate=validate.OneOf(
+            [Estado.REVISAO, Estado.NEGADA]
+        )
+    )
