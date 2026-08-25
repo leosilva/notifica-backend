@@ -1,4 +1,4 @@
-from flask import jsonify, make_response, redirect, url_for
+from flask import jsonify, make_response, url_for
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -83,13 +83,12 @@ def suap_callback():
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh_token():
-    response = redirect(utils.BASE_FRONTEND_URL)
-
-    set_access_cookies(
-        response, create_access_token(
-            identity=str(current_user.id)
-        )
+    access = create_access_token(
+        identity=str(current_user.id)
     )
+    response = make_response({'access': access}, 200)
+
+    set_access_cookies(response, access)
 
     return response
 

@@ -1,5 +1,3 @@
-import os
-
 from dotenv import load_dotenv
 
 from app.auth.models import Role
@@ -7,7 +5,6 @@ from app.auth.models import Role
 _ = load_dotenv()
 
 BASE_SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
-BASE_FRONTEND_URL = os.getenv('BASE_FRONTEND_URL', '')
 
 
 def get_user_data(data: dict) -> dict[str, str | Role | None]:

@@ -69,8 +69,6 @@ SUAP_CLIENT_SECRET=
 DEEPSEEK_API_KEY=
 
 CLOUDINARY_URL=
-
-BASE_FRONTEND_URL=
 ```
 
 Aplique as migrações do banco:

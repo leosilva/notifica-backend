@@ -15,7 +15,6 @@ services:
       SUAP_CLIENT_SECRET: ${SUAP_CLIENT_SECRET}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
       CLOUDINARY_URL: ${CLOUDINARY_URL}
-      BASE_FRONTEND_URL: ${BASE_FRONTEND_URL}
     depends_on:
       db:
         condition: service_healthy
