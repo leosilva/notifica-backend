@@ -4,16 +4,21 @@ services:
     ports:
       - 8000:8000
     environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - SUAP_CLIENT_ID=${SUAP_CLIENT_ID}
-      - SUAP_CLIENT_SECRET=${SUAP_CLIENT_SECRET}
-      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
-      - CLOUDINARY_URL=${CLOUDINARY_URL}
-      - BASE_FRONTEND_URL=${BASE_FRONTEND_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: db
+      DB_PORT: "3306"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SUAP_CLIENT_ID: ${SUAP_CLIENT_ID}
+      SUAP_CLIENT_SECRET: ${SUAP_CLIENT_SECRET}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      CLOUDINARY_URL: ${CLOUDINARY_URL}
+      BASE_FRONTEND_URL: ${BASE_FRONTEND_URL}
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: mariadb:latest
@@ -24,3 +29,9 @@ services:
       MARIADB_PASSWORD: ${DB_PASSWORD}
       MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
       MARIADB_DATABASE: ${DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -u root -p$$MARIADB_ROOT_PASSWORD || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
