@@ -25,7 +25,6 @@ class Postagem(db.Model):
     autor_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('usuario.id'))
     titulo: so.Mapped[str] = so.mapped_column(sa.String(128))
     corpo: so.Mapped[str] = so.mapped_column(sa.String(324))
-    imagem: so.Mapped[str | None] = so.mapped_column(sa.String(512), nullable=True)
     gradiente: so.Mapped[str | None] = so.mapped_column(sa.String(64), nullable=True)
     estado: so.Mapped[Estado] = so.mapped_column(sa.Enum(Estado), default=Estado.APROVADA)
     visibilidade: so.Mapped[Visibilidade] = so.mapped_column(sa.Enum(Visibilidade))

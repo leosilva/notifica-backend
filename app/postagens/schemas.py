@@ -14,15 +14,10 @@ class PostagemPostSchema(ma.Schema):
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
 
 
-class PostagemImagemSchema(ma.Schema):
-    imagem = Upload()
-
-
 class PostagemSchema(ma.Schema):
     id = ma.fields.Integer()
     titulo = ma.fields.String(required=True, validate=validate.Length(max=128))
     corpo = ma.fields.String(required=True, validate=validate.Length(max=324))
-    imagem = ma.fields.String()
     gradiente = ma.fields.String(validate=validate.Length(max=500))
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
     estado = ma.fields.Enum(Estado, by_value=True)
