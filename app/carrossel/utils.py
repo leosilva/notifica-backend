@@ -19,7 +19,7 @@ def get_conteudo() -> list[dict[str, str | int]]:
             .where(
                 Postagem.criado_em >= limite,
                 Postagem.estado == Estado.APROVADA,
-                Postagem.visibilidade == Visibilidade.PUBLICADA,
+                Postagem.visibilidade == Visibilidade.PUBLICADA
             )
             .order_by(Postagem.criado_em.desc())
         ).all()

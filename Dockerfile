@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT [ "uv", "run", "flask", "--app", "app", "run", "--port=8000", "--host=0.0.0.0" ]
+ENTRYPOINT [ "uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
