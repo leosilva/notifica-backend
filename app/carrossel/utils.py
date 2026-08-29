@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from app import db
 from app.carrossel.schemas import Tipo
@@ -16,6 +17,7 @@ def get_conteudo() -> list[dict[str, str | int]]:
     postagens = deque(
         db.session.scalars(
             select(Postagem)
+            .options(joinedload(Postagem.autor))
             .where(
                 Postagem.criado_em >= limite,
                 Postagem.estado == Estado.APROVADA,
@@ -28,6 +30,7 @@ def get_conteudo() -> list[dict[str, str | int]]:
     noticias = deque(
         db.session.scalars(
             select(Noticia)
+            .options(joinedload(Noticia.autor))
             .where(
                 Noticia.criado_em >= limite,
                 Noticia.visibilidade == Visibilidade.PUBLICADA,
