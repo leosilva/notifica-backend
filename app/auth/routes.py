@@ -12,7 +12,7 @@ from sqlalchemy import select
 
 from app import db, oauth
 from app.auth import auth_bp, utils
-from app.auth.models import Usuario
+from app.auth.models import Role, Usuario
 from app.auth.schema import UsuarioSchema
 
 
@@ -44,7 +44,14 @@ def suap_callback():
             'erro': 'Erro de requisição do SUAP.'
         }, 500
 
+    # pegando o setor do usuário
     user_data = utils.get_user_data(res.json())
+
+    if user_data.get('role') != Role.ALUNO:
+        res = oauth.suap.get('/api/rh/servidores/detalhado')
+
+        if res.status_code == 403:
+            user_data['setor'] = res['results'][0]['setor']
 
     if user_data['campus'] != 'CM':
         return {

@@ -11,7 +11,7 @@ from app.noticias.models import Noticia
 from app.postagens.models import Estado, Postagem, Visibilidade
 
 
-def get_conteudo() -> list[dict[str, str | int]]:
+def get_conteudo(setor: str) -> list[dict[str, str | int]]:
     limite = datetime.now() - timedelta(hours=24)
 
     postagens = deque(
@@ -21,7 +21,8 @@ def get_conteudo() -> list[dict[str, str | int]]:
             .where(
                 Postagem.criado_em >= limite,
                 Postagem.estado == Estado.APROVADA,
-                Postagem.visibilidade == Visibilidade.PUBLICADA
+                Postagem.visibilidade == Visibilidade.PUBLICADA,
+                Postagem.autor.has(setor=setor)
             )
             .order_by(Postagem.criado_em.desc())
         ).all()
@@ -34,12 +35,14 @@ def get_conteudo() -> list[dict[str, str | int]]:
             .where(
                 Noticia.criado_em >= limite,
                 Noticia.visibilidade == Visibilidade.PUBLICADA,
+                Noticia.autor.has(setor=setor)
             )
             .order_by(Noticia.criado_em.desc())
         ).all()
     )
 
     conteudo: list[dict[str, Any]] = []
+
     while postagens or noticias:
         for _ in range(5):
             if not noticias:
@@ -65,7 +68,6 @@ def get_conteudo() -> list[dict[str, str | int]]:
                 'titulo': postagem.titulo,
                 'corpo': postagem.corpo,
                 'url': None,
-                'imagem': postagem.imagem,
                 'gradiente': postagem.gradiente,
                 'visibilidade': postagem.visibilidade,
                 'autor': postagem.autor,

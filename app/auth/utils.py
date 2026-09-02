@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 
+from app import oauth
 from app.auth.models import Role
 
 _ = load_dotenv()
@@ -8,6 +9,11 @@ BASE_SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
 
 
 def get_user_data(data: dict) -> dict[str, str | Role | None]:
+    role = data.get('tipo_usuario', '').lower()
+
+    if role != Role.ALUNO:
+        ...
+
     return {
         'matricula': data.get('identificacao'),
         'nome': data.get('nome_social') or data.get('nome_registro'),

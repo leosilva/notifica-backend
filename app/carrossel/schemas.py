@@ -21,3 +21,7 @@ class ConteudoSchema(ma.Schema):
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
     autor = ma.fields.Nested(UsuarioSchema)
     tipo = ma.fields.Enum(Tipo, by_value=True)
+
+
+class SetorConteudoSchema(ma.Schema):
+    setor = ma.fields.String(required=True)

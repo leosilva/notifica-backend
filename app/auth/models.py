@@ -19,6 +19,7 @@ class Usuario(db.Model):
     matricula: so.Mapped[str] = so.mapped_column(sa.String(255), unique=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(255), unique=True)
     role: so.Mapped[Role] = so.mapped_column(sa.Enum(Role), default=Role.ALUNO)
+    setor: so.Mapped[str] = so.mapped_column(sa.String(255), nullable=True)
     postagens: so.Mapped[list['Postagem']] = so.relationship(back_populates='autor')
     noticias: so.Mapped[list['Noticia']] = so.relationship(back_populates='autor')
     criado_em: so.Mapped[datetime] = so.mapped_column(sa.DateTime(), default=datetime.now)
