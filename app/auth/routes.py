@@ -76,7 +76,7 @@ def suap_callback():
 
     db.session.commit()
 
-    res = make_response(UsuarioSchema().dump(usuario), 201)
+    res = make_response(res.json(), 201)
 
     access = create_access_token(identity=str(usuario.id))
     set_access_cookies(res, access)
