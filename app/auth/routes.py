@@ -1,4 +1,4 @@
-from flask import jsonify, make_response, url_for
+from flask import abort, jsonify, make_response, url_for
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -16,21 +16,16 @@ from app.auth.models import Role, Usuario
 from app.auth.schema import UsuarioSchema
 
 
-@auth_bp.route('/me')
+@auth_bp.route("/me")
 @jwt_required()
 @auth_bp.response(200, UsuarioSchema)
 def me():
     return current_user
 
 
-@auth_bp.route('/suap/login')
+@auth_bp.route("/suap/login")
 def suap_login():
-    return oauth.suap.authorize_redirect(
-        url_for(
-            'auth.suap_callback',
-            _external=True
-        )
-    )
+    return oauth.suap.authorize_redirect(url_for("auth.suap_callback", _external=True))
 
 
 @auth_bp.route("/suap/callback")
@@ -38,41 +33,41 @@ def suap_login():
 def suap_callback():
     _ = oauth.suap.authorize_access_token()
 
-    res = oauth.suap.get('/api/rh/eu')
+    res = oauth.suap.get("/api/rh/eu")
     if res.status_code != 200:
-        return {
-            'erro': 'Erro de requisição do SUAP.'
-        }, 500
+        return {"erro": "Erro de requisição do SUAP."}, 500
 
     # pegando o setor do usuário
     user_data = utils.get_user_data(res.json())
 
-    if user_data.get('role') != Role.ALUNO:
-        res = oauth.suap.get('/api/rh/servidores/detalhado')
+    if user_data.get("role") != Role.ALUNO:
+        res = oauth.suap.get("/api/rh/servidores/detalhado")
 
         if res.status_code == 403:
-            user_data['setor'] = res['results'][0]['setor']
+            user_data["setor"] = res["results"][0]["setor"]
 
-    if user_data['campus'] != 'CM':
-        return {
-            'erro': 'Campus não autorizado.'
-        }, 403
+    if user_data["campus"] != "CM":
+        return {"erro": "Campus não autorizado."}, 403
 
     usuario = db.session.scalar(
-        select(Usuario).where(
-            Usuario.matricula == user_data['matricula']
-        )
+        select(Usuario).where(Usuario.matricula == user_data["matricula"])
     )
 
     if not usuario:
         usuario = Usuario(
-            matricula=user_data['matricula'],
+            matricula=user_data["matricula"],
         )
         db.session.add(usuario)
 
-    usuario.nome = user_data['nome']
-    usuario.email = user_data['email']
-    usuario.role = user_data['role']
+    usuario.nome = user_data["nome"]
+    usuario.email = user_data["email"]
+    usuario.role = user_data["role"]
+
+    if usuario.role.value.startswith("Servidor"):
+        res = oauth.suap.get(f"/api/rh/servidor-resumido?matricula={usuario.matricula}")
+        if res.status_code != 200:
+            return {"erro": "Erro de requisição do SUAP."}, 500
+        usuario.setor = res.json().get("results")[0].get("setor")
 
     db.session.commit()
 
@@ -87,25 +82,21 @@ def suap_callback():
     return res
 
 
-@auth_bp.route('/refresh', methods=['POST'])
+@auth_bp.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def refresh_token():
-    access = create_access_token(
-        identity=str(current_user.id)
-    )
-    response = make_response({'access': access}, 200)
+    access = create_access_token(identity=str(current_user.id))
+    response = make_response({"access": access}, 200)
 
     set_access_cookies(response, access)
 
     return response
 
 
-@auth_bp.route('/logout', methods=['POST'])
+@auth_bp.route("/logout", methods=["POST"])
 @jwt_required()
 @auth_bp.response(200)
 def logout():
-    res = jsonify({
-        'msg': 'logout concluído.'
-    })
+    res = jsonify({"msg": "logout concluído."})
     unset_jwt_cookies(res)
     return res
