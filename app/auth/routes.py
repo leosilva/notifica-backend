@@ -1,4 +1,6 @@
-from flask import abort, jsonify, make_response, url_for
+import os
+
+from flask import jsonify, make_response, url_for, redirect
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -9,12 +11,15 @@ from flask_jwt_extended import (
 )
 from flask_jwt_extended.utils import set_access_cookies
 from sqlalchemy import select
+from dotenv import load_dotenv
 
 from app import db, oauth
 from app.auth import auth_bp, utils
 from app.auth.models import Role, Usuario
 from app.auth.schema import UsuarioSchema
 
+
+load_dotenv()
 
 @auth_bp.route("/me")
 @jwt_required()
@@ -69,9 +74,11 @@ def suap_callback():
             return {"erro": "Erro de requisição do SUAP."}, 500
         usuario.setor = res.json().get("results")[0].get("setor")
 
+    redirection = "/post" if usuario.role.value == "aluno" else "/comunicados"
+
     db.session.commit()
 
-    res = make_response(res.json(), 201)
+    res = redirect(f'{os.getenv('FRONTEND_BASE_URL')}/{redirection}')
 
     access = create_access_token(identity=str(usuario.id))
     set_access_cookies(res, access)
