@@ -81,7 +81,7 @@ uv run flask db upgrade
 Inicie o servidor de desenvolvimento:
 
 ```bash
-uv run flask --app main run
+uv run flask --app app run
 ```
 
 A aplicação estará disponível em `http://localhost:5000/`. A documentação (swagger-ui) estará em `http://localhost:5000/docs/`

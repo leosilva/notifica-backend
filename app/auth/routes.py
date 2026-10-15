@@ -78,7 +78,11 @@ def suap_callback():
 
     db.session.commit()
 
-    res = redirect(f'{os.getenv('FRONTEND_BASE_URL')}/{redirection}')
+    frontend_base_url = os.getenv(
+        "FRONTEND_BASE_URL", "http://localhost:5173"
+    ).rstrip("/")
+
+    res = redirect(f"{frontend_base_url}{redirection}")
 
     access = create_access_token(identity=str(usuario.id))
     set_access_cookies(res, access)

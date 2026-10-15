@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_smorest import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 from app.settings import Settings
 
@@ -21,6 +22,12 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
 oauth = OAuth(app)
+
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[os.getenv('FRONTEND_BASE_URL', 'http://localhost:5173')],
+)
 
 from app.auth.models import Usuario
 

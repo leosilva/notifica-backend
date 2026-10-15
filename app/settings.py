@@ -33,3 +33,9 @@ class Settings:
     JWT_TOKEN_LOCATION = ['headers', 'cookies']
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=5)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
+
+    # Cookies de autenticação
+    # Em produção (HTTPS, domínios diferentes) use:
+    #   JWT_COOKIE_SECURE=true e JWT_COOKIE_SAMESITE=None
+    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'false').lower() == 'true'
+    JWT_COOKIE_SAMESITE = os.getenv('JWT_COOKIE_SAMESITE') or None
