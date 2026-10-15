@@ -26,7 +26,13 @@ oauth = OAuth(app)
 CORS(
     app,
     supports_credentials=True,
-    origins=[os.getenv('FRONTEND_BASE_URL', 'http://localhost:5173')],
+    origins=[
+        os.getenv('FRONTEND_BASE_URL', 'http://localhost:5173'),
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+        'http://0.0.0.0:5173'
+    ],
+    allow_headers=['Content-Type', 'Authorization', 'X-CSRF-Token'],
 )
 
 from app.auth.models import Usuario
