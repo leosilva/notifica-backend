@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT [ "uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+ENTRYPOINT [ "uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "-w", "2", "--threads", "2", "app:app"]

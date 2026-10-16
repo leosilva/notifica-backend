@@ -22,6 +22,3 @@ class ConteudoSchema(ma.Schema):
     autor = ma.fields.Nested(UsuarioSchema)
     tipo = ma.fields.Enum(Tipo, by_value=True)
 
-
-class SetorConteudoSchema(ma.Schema):
-    setor = ma.fields.String(required=True)
