@@ -19,5 +19,5 @@ def get_user_data(data: dict) -> dict[str, str | Role | None]:
         'nome': data.get('nome_social') or data.get('nome_registro'),
         'email': data.get('email_google_classroom'),
         'campus': data.get('campus'),
-        'role': Role(data.get('tipo_usuario', '').lower()),
+        'role': Role.ALUNO if not 'servidor' in role else Role.SERVIDOR,
     }
