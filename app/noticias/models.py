@@ -22,6 +22,7 @@ class Noticia(db.Model):
     corpo: so.Mapped[str | None] = so.mapped_column(sa.Text(), nullable=True)
     url: so.Mapped[str | None] = so.mapped_column(sa.String(512), nullable=True, unique=True)
     imagem: so.Mapped[str | None] = so.mapped_column(sa.String(512), nullable=True)
+    gradiente: so.Mapped[str | None] = so.mapped_column(sa.String(500), nullable=True)
     fonte: so.Mapped[Fonte | None] = so.mapped_column(sa.Enum(Fonte), nullable=True)
     autor: so.Mapped[Usuario | None] = so.relationship(back_populates='noticias')
     autor_id: so.Mapped[int | None] = so.mapped_column(sa.ForeignKey('usuario.id'), nullable=True)

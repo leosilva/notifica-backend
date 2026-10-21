@@ -11,7 +11,7 @@ from app.noticias.models import Noticia
 from app.postagens.models import Estado, Postagem, Visibilidade
 
 
-def get_conteudo() -> list[dict[str, str | int]]:
+def get_conteudo() -> list[dict[str, Any]]:
     limite = datetime.now() - timedelta(hours=24)
 
     postagens = deque(
@@ -53,7 +53,7 @@ def get_conteudo() -> list[dict[str, str | int]]:
                 'corpo': noticia.corpo,
                 'url': noticia.url,
                 'imagem': noticia.imagem,
-                'gradiente': None,
+                'gradiente': noticia.gradiente,
                 'visibilidade': noticia.visibilidade,
                 'autor': noticia.autor,
                 'tipo': Tipo.NOTICIA,

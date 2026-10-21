@@ -10,9 +10,7 @@ class NoticiaPostSchema(ma.Schema):
     corpo = ma.fields.String(required=True)
     url = ma.fields.URL()
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
-
-
-class NoticiaImagemSchema(ma.Schema):
+    gradiente = ma.fields.String(required=False)
     imagem = ma.fields.Raw(metadata={"type": "string", "format": "binary"})
 
 
@@ -22,6 +20,7 @@ class NoticiaSchema(ma.Schema):
     corpo = ma.fields.String(required=True)
     url = ma.fields.URL()
     imagem = ma.fields.URL()
+    gradiente = ma.fields.String(allow_none=True)
     fonte = ma.fields.Enum(Fonte, by_value=True)
     autor = ma.fields.Nested(UsuarioSchema)
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)

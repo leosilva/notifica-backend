@@ -1,6 +1,6 @@
 from app.carrossel import carrossel_bp
 from app.carrossel.schemas import ConteudoSchema
-from app.carrossel.utils import get_conteudo
+from app.carrossel.services import get_conteudo
 
 
 @carrossel_bp.route('/')

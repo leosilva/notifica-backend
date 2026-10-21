@@ -1,4 +1,5 @@
 from cloudinary import uploader
+from flask import request
 from flask_jwt_extended import current_user, jwt_required
 from flask_smorest import abort
 from sqlalchemy import select
@@ -10,7 +11,6 @@ from app.auth.permissions import roles_required
 from app.noticias import noticias_bp
 from app.noticias.models import Noticia, Visibilidade
 from app.noticias.schemas import (
-    NoticiaImagemSchema,
     NoticiaPostSchema,
     NoticiaQuerySchema,
     NoticiaSchema,
@@ -20,19 +20,23 @@ from app.noticias.schemas import (
 @noticias_bp.route('/', methods=['POST'])
 @jwt_required()
 @roles_required(Role.ADMIN, Role.SERVIDOR)
-@noticias_bp.arguments(schema=NoticiaPostSchema, location='form')
-@noticias_bp.arguments(schema=NoticiaImagemSchema, location='files')
+@noticias_bp.arguments(
+    schema=NoticiaPostSchema,
+    location='form',
+    content_type='multipart/form-data'
+)
 @noticias_bp.response(201, schema=NoticiaSchema(exclude=['autor']))
-def postar_noticia(data, files):
+def postar_noticia(data):
     noticia = Noticia(
         titulo=data['titulo'],
         corpo=data['corpo'],
         url=data.get('url'),
         autor=current_user,
+        gradiente=data.get('gradiente') or None,
         visibilidade=data.get('visibilidade') or Visibilidade.PUBLICADA,
     )
 
-    imagem = files.get('imagem')
+    imagem = request.files.get('imagem')
     pub_id = None
 
     try:
@@ -93,10 +97,13 @@ def detail_noticia(noticia_id):
 @noticias_bp.route('/<int:noticia_id>', methods=['PUT'])
 @jwt_required()
 @roles_required(Role.ADMIN, Role.SERVIDOR)
-@noticias_bp.arguments(schema=NoticiaPostSchema, location='form')
-@noticias_bp.arguments(schema=NoticiaImagemSchema, location='files')
+@noticias_bp.arguments(
+    schema=NoticiaPostSchema,
+    location='form',
+    content_type='multipart/form-data'
+)
 @noticias_bp.response(200, schema=NoticiaSchema(exclude=['autor']))
-def atualizar_noticia(data, files, noticia_id):
+def atualizar_noticia(data, noticia_id):
     noticia = db.session.scalar(
         select(Noticia).where(
             Noticia.id == noticia_id,
@@ -111,10 +118,13 @@ def atualizar_noticia(data, files, noticia_id):
     noticia.corpo = data['corpo']
     noticia.url = data.get('url')
 
+    if 'gradiente' in data:
+        noticia.gradiente = data.get('gradiente') or None
+
     if data.get('visibilidade'):
         noticia.visibilidade = data.get('visibilidade')
 
-    imagem = files.get('imagem')
+    imagem = request.files.get('imagem')
 
     if bool(imagem) and imagem.filename != '':
         res = uploader.upload(imagem)
