@@ -22,9 +22,8 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 app.config.update(
     SESSION_COOKIE_SAMESITE="None",
-    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SECURE=False,
     SESSION_COOKIE_HTTPONLY=True,
-    PREFERRED_URL_SCHEME="https",
 )
 
 api = Api(app)

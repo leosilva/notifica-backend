@@ -30,7 +30,7 @@ def me():
 
 @auth_bp.route("/suap/login")
 def suap_login():
-    return oauth.suap.authorize_redirect(url_for("auth.suap_callback", _external=True))
+    return oauth.suap.authorize_redirect(os.getenv("SUAP_REDIRECT_URI", "http://localhost:8000/auth/suap/callback"))
 
 
 @auth_bp.route("/suap/callback")
