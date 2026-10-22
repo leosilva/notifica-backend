@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 from flask_smorest import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app.settings import Settings
 
@@ -16,6 +17,15 @@ _ = load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object(Settings)
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+app.config.update(
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    PREFERRED_URL_SCHEME="https",
+)
 
 api = Api(app)
 db = SQLAlchemy(app)
