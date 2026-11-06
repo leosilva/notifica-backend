@@ -18,6 +18,7 @@ class ConteudoSchema(ma.Schema):
     url = ma.fields.URL(allow_none=True)
     imagem = ma.fields.URL()
     gradiente = ma.fields.String(allow_none=True)
+    vencimento = ma.fields.DateTime(allow_none=True)
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
     autor = ma.fields.Nested(UsuarioSchema)
     tipo = ma.fields.Enum(Tipo, by_value=True)

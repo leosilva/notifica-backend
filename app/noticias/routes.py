@@ -31,6 +31,7 @@ def postar_noticia(data):
         titulo=data['titulo'],
         corpo=data['corpo'],
         url=data.get('url'),
+        vencimento=data.get('vencimento'),
         autor=current_user,
         gradiente=data.get('gradiente') or None,
         visibilidade=data.get('visibilidade') or Visibilidade.PUBLICADA,
@@ -117,6 +118,9 @@ def atualizar_noticia(data, noticia_id):
     noticia.titulo = data['titulo']
     noticia.corpo = data['corpo']
     noticia.url = data.get('url')
+
+    if 'vencimento' in data:
+        noticia.vencimento = data.get('vencimento')
 
     if 'gradiente' in data:
         noticia.gradiente = data.get('gradiente') or None

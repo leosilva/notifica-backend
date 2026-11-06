@@ -2,7 +2,7 @@ from collections import deque
 from datetime import datetime, timedelta
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import joinedload
 
 from app import db
@@ -12,7 +12,8 @@ from app.postagens.models import Estado, Postagem, Visibilidade
 
 
 def get_conteudo() -> list[dict[str, Any]]:
-    limite = datetime.now() - timedelta(hours=24)
+    agora = datetime.now()
+    limite = agora - timedelta(hours=24)
 
     postagens = deque(
         db.session.scalars(
@@ -32,8 +33,17 @@ def get_conteudo() -> list[dict[str, Any]]:
             select(Noticia)
             .options(joinedload(Noticia.autor))
             .where(
-                Noticia.criado_em >= limite,
                 Noticia.visibilidade == Visibilidade.PUBLICADA,
+                or_(
+                    and_(
+                        Noticia.vencimento.is_not(None),
+                        Noticia.vencimento >= agora,
+                    ),
+                    and_(
+                        Noticia.vencimento.is_(None),
+                        Noticia.criado_em >= limite,
+                    ),
+                ),
             )
             .order_by(Noticia.criado_em.desc())
         ).all()
@@ -54,6 +64,7 @@ def get_conteudo() -> list[dict[str, Any]]:
                 'url': noticia.url,
                 'imagem': noticia.imagem,
                 'gradiente': noticia.gradiente,
+                'vencimento': noticia.vencimento,
                 'visibilidade': noticia.visibilidade,
                 'autor': noticia.autor,
                 'tipo': Tipo.NOTICIA,
