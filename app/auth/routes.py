@@ -30,7 +30,7 @@ def me():
 
 @auth_bp.route("/suap/login")
 def suap_login():
-    return oauth.suap.authorize_redirect(os.getenv("SUAP_REDIRECT_URI", "http://localhost:8000/auth/suap/callback"))
+    return oauth.suap.authorize_redirect(os.getenv("SUAP_REDIRECT_URI", "https://notifica-backend-liart.vercel.app/auth/suap/callback"))
 
 
 @auth_bp.route("/suap/callback")
