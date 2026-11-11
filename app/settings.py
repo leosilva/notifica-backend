@@ -6,21 +6,11 @@ from dotenv import load_dotenv
 
 _ = load_dotenv()
 
-def get_database_uri():
-    user     = os.getenv('DB_USER', 'root')
-    password = os.getenv('DB_PASSWORD')
-    host     = os.getenv('DB_HOST', 'localhost')
-    port     = os.getenv('DB_PORT', '3306')
-    database = os.getenv('DB_NAME', 'notifica')
-
-    return f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'
-
-
 @final
 class Settings:
     SECRET_KEY = os.getenv('SECRET_KEY')
 
-    SQLALCHEMY_DATABASE_URI = get_database_uri()
+    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
 
     API_TITLE = 'notIFica'
     API_VERSION = 'v1'

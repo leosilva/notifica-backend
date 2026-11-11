@@ -16,7 +16,7 @@ A exibição do conteúdo será feita através de televisores institucionais pel
 - Python 3.13+;
 - Flask;
 - Marshmallow;
-- MySQL/MariaDB;
+- Postgres/Supabase;
 - SQLAlchemy;
 - Alembic;
 - Cloudinary;
@@ -57,9 +57,7 @@ Defina as variáveis de ambiente:
 ```bash
 SECRET_KEY=
 
-DB_USER=
-DB_PASSWORD=
-DB_NAME=
+SQLALCHEMY_DATABASE_URI=
 
 JWT_SECRET_KEY=
 
@@ -81,10 +79,10 @@ uv run flask db upgrade
 Inicie o servidor de desenvolvimento:
 
 ```bash
-uv run flask --app app run
+uv run flask run --port=8000
 ```
 
-A aplicação estará disponível em `http://localhost:5000/`. A documentação (swagger-ui) estará em `http://localhost:5000/docs/`
+A aplicação estará disponível em `http://localhost:8000/`. A documentação (swagger-ui) estará em `http://localhost:8000/docs/`
 
 ### Coleta de notícias
 
