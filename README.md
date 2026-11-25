@@ -94,7 +94,13 @@ uv run python3 -m app.noticias.coletor
 
 O coletor consulta feeds RSS, normaliza os campos disponíveis e persiste as notícias diretamente no banco de dados.
 
-Sua execução periódica depende do ambiente de configuração.
+A mesma coleta pode ser disparada pelo endpoint público:
+
+```bash
+curl -i http://localhost:8000/noticias/coleta
+```
+
+O endpoint responde `204 No Content` após executar a coleta. Em produção, ele é chamado periodicamente pelo cron do Vercel, configurado em `vercel.json` (a cada 12 horas).
 
 ## To do
 

@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/noticias/coleta", "schedule": "0 12 * * *" }
+  ]
+}

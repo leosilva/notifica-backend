@@ -9,12 +9,20 @@ from app import db
 from app.auth.models import Role
 from app.auth.permissions import roles_required
 from app.noticias import noticias_bp
+from app.noticias.coletor import collect
 from app.noticias.models import Noticia, Visibilidade
 from app.noticias.schemas import (
     NoticiaPostSchema,
     NoticiaQuerySchema,
     NoticiaSchema,
 )
+
+
+@noticias_bp.route('/coleta')
+@noticias_bp.response(204)
+def coletar_noticias_endpoint():
+    collect()
+    return
 
 
 @noticias_bp.route('/', methods=['POST'])
