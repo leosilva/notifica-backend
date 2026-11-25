@@ -3,6 +3,7 @@ import enum
 import marshmallow as ma
 
 from app.auth.schema import UsuarioSchema
+from app.noticias.models import Fonte
 from app.postagens.models import Visibilidade
 
 
@@ -16,9 +17,10 @@ class ConteudoSchema(ma.Schema):
     titulo = ma.fields.String(required=True)
     corpo = ma.fields.String(required=True)
     url = ma.fields.URL(allow_none=True)
-    imagem = ma.fields.URL()
+    imagem = ma.fields.URL(allow_none=True)
     gradiente = ma.fields.String(allow_none=True)
     vencimento = ma.fields.DateTime(allow_none=True)
+    fonte = ma.fields.Enum(Fonte, by_value=True, allow_none=True)
     visibilidade = ma.fields.Enum(Visibilidade, by_value=True)
     autor = ma.fields.Nested(UsuarioSchema)
     tipo = ma.fields.Enum(Tipo, by_value=True)
